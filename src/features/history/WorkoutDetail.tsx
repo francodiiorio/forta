@@ -1,24 +1,23 @@
 import type { Workout } from '../../domain/workout/workout'
 import type { ExercisesApi } from '../exercises/useExercises'
-import { isoDateTimeToDateInput } from '../../utils/date'
 
 interface WorkoutDetailProps {
   workout: Workout
   exercisesApi: ExercisesApi
-  onClose: () => void
 }
 
 /**
  * Read-only view of one past session: exercises and sets as recorded.
  * No volume, PR, or progress here — those are derived analytics
  * (Stage 6), computed on demand, never shown as if they were facts.
+ * Rendered inside the Modal in HistorySection, which already shows the
+ * workout's date as its title and provides the close control (D-045).
  */
-export function WorkoutDetail({ workout, exercisesApi, onClose }: WorkoutDetailProps) {
+export function WorkoutDetail({ workout, exercisesApi }: WorkoutDetailProps) {
   const exerciseById = new Map(exercisesApi.exercises.map((exercise) => [exercise.id, exercise]))
 
   return (
-    <section className="exercise-card" aria-label="Detalle del entrenamiento">
-      <h3>{isoDateTimeToDateInput(workout.startedAt)}</h3>
+    <section aria-label="Detalle del entrenamiento">
       {workout.notes && <p className="muted">{workout.notes}</p>}
 
       {workout.exercises.map((workoutExercise) => {
@@ -45,10 +44,6 @@ export function WorkoutDetail({ workout, exercisesApi, onClose }: WorkoutDetailP
           </div>
         )
       })}
-
-      <button type="button" onClick={onClose}>
-        Cerrar
-      </button>
     </section>
   )
 }

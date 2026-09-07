@@ -604,3 +604,32 @@ CSS class: `visibility` (delayed only on the closing transition) drives
 both the fade/scale animation and hides it from tab order and screen
 readers while closed, with no JS timers needed for either transition
 direction.
+
+## D-046 — History list redesigned as cards; its detail view moved into a Modal
+
+Product feedback: the workout history read as "una lista plana"
+(unstyled `<li>` bullets) and "Ver detalle" looked broken — it did
+work, but `WorkoutDetail` rendered inline *below the entire list*, so
+opening it on the first (or any non-last) row added content far off
+-screen with no visible change near the click.
+
+Each row is now a full-width button styled as a card (`.history-item`):
+date, a "N series" badge, the exercise names (truncated with an
+ellipsis rather than wrapping/growing the row), and a trailing
+`ChevronRightIcon` (added in the post-Stage-8 pass, D-035/D-037, but
+never actually used until now) signaling it opens something. `Ver
+detalle` stays as the button's accessible name (`aria-label`) for
+continuity with the existing test and because, same as every other
+list here, the row itself carries the visible context — a screen
+reader arrives at "Ver detalle" already having read the row's date and
+exercises.
+
+`WorkoutDetail` now renders inside the `Modal` from D-045 instead of
+inline: it dropped its own date heading (the Modal's title shows it)
+and its own "Cerrar" button (the Modal already provides one, plus
+Escape and click-outside — a second close control would be redundant,
+same reasoning as D-045's body-weight modal). Unlike that modal, this
+one is *not* lazily mounted on first open: the list rows only ever show
+a date/exercise summary, never the per-set detail `WorkoutDetail`
+renders, so there's no risk of the same numbers appearing twice in the
+DOM the way body-weight's summary and table could.
