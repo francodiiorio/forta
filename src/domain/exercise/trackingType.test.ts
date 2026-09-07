@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { requiresReps, requiresWeight, type TrackingType } from './trackingType'
+import { requiresDuration, requiresReps, requiresWeight, type TrackingType } from './trackingType'
 
 describe('requiresWeight', () => {
   it.each<[TrackingType, boolean]>([
@@ -22,5 +22,17 @@ describe('requiresReps', () => {
     ['TIME', false],
   ])('%s -> %s', (trackingType, expected) => {
     expect(requiresReps(trackingType)).toBe(expected)
+  })
+})
+
+describe('requiresDuration', () => {
+  it.each<[TrackingType, boolean]>([
+    ['TIME', true],
+    ['WEIGHT_REPS', false],
+    ['BODYWEIGHT_REPS', false],
+    ['ASSISTED_BODYWEIGHT', false],
+    ['REPS_ONLY', false],
+  ])('%s -> %s', (trackingType, expected) => {
+    expect(requiresDuration(trackingType)).toBe(expected)
   })
 })

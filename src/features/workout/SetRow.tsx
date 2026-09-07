@@ -1,5 +1,5 @@
 import type { Exercise } from '../../domain/exercise/exercise'
-import { requiresReps, requiresWeight } from '../../domain/exercise/trackingType'
+import { requiresDuration, requiresReps, requiresWeight } from '../../domain/exercise/trackingType'
 import { SET_TYPES, type Set as WorkoutSet } from '../../domain/workout/set'
 
 interface SetRowProps {
@@ -38,6 +38,17 @@ export function SetRow({ set, trackingType, index, onChange, onRemove }: SetRowP
             type="number"
             value={set.reps ?? ''}
             onChange={(event) => onChange({ reps: toOptionalNumber(event.target.value) })}
+          />
+        </label>
+      )}
+
+      {requiresDuration(trackingType) && (
+        <label>
+          Duración (seg)
+          <input
+            type="number"
+            value={set.durationSeconds ?? ''}
+            onChange={(event) => onChange({ durationSeconds: toOptionalNumber(event.target.value) })}
           />
         </label>
       )}

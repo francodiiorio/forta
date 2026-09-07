@@ -36,9 +36,12 @@ Create and reuse routines when starting a workout. Starting a workout
 from a routine replaces the current draft rather than merging (see
 `docs/DECISIONS.md` D-020).
 
-## Stage 5 — History
+## Stage 5 — History (done)
 
-Workout history list and session detail view.
+Workout history list and session detail view. Added simple in-app tabs
+(no router — see `docs/DECISIONS.md` D-021) since the app now has three
+sections. Also closed a Stage 1/3 gap found while building this: `Set`
+had no field for `TIME`-tracked exercises (D-022).
 
 ## Stage 6 — Analytics
 

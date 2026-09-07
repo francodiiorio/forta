@@ -64,4 +64,33 @@ describe('LogWorkoutForm', () => {
 
     expect(screen.getByRole('button', { name: 'Guardar entrenamiento' })).toBeDisabled()
   })
+
+  it('logs a TIME-tracked exercise by duration, not weight/reps (regression: D-022)', async () => {
+    render(<Harness />)
+
+    await screen.findByText('No hay ejercicios todavía.')
+    fireEvent.click(screen.getByRole('button', { name: 'Crear ejercicio' }))
+
+    fireEvent.change(screen.getByLabelText('Nombre'), { target: { value: 'Plank' } })
+    const primarySelect = screen.getByLabelText('Músculos primarios') as HTMLSelectElement
+    ;(within(primarySelect).getByRole('option', { name: 'ABS' }) as HTMLOptionElement).selected = true
+    fireEvent.change(primarySelect)
+    fireEvent.change(screen.getByLabelText('Tipo de registro'), { target: { value: 'TIME' } })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Crear ejercicio' }))
+    expect(await screen.findByRole('heading', { name: 'Plank' })).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: '+ Serie' }))
+    const setGroup = screen.getByRole('group', { name: 'Serie 1' })
+
+    expect(within(setGroup).queryByLabelText('Peso (kg)')).not.toBeInTheDocument()
+    expect(within(setGroup).queryByLabelText('Reps')).not.toBeInTheDocument()
+    fireEvent.change(within(setGroup).getByLabelText('Duración (seg)'), { target: { value: '45' } })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar entrenamiento' }))
+    expect(await screen.findByRole('status')).toHaveTextContent('Entrenamiento guardado.')
+
+    const [workout] = await workoutRepository.getAll()
+    expect(workout.exercises[0].sets).toEqual([expect.objectContaining({ durationSeconds: 45 })])
+  })
 })

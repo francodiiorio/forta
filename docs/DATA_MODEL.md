@@ -76,6 +76,7 @@ One set within a `WorkoutExercise`.
 | `id` | `Id` | |
 | `weight` | `number \| undefined` | present when `trackingType` uses weight |
 | `reps` | `number \| undefined` | present when `trackingType` uses reps |
+| `durationSeconds` | `number \| undefined` | present when `trackingType` is `TIME`, instead of reps |
 | `rir` | `number \| undefined` | Reps In Reserve, optional |
 | `rpe` | `number \| undefined` | Rate of Perceived Exertion, optional |
 | `type` | `SetType` | see below |

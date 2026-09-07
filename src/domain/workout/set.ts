@@ -9,6 +9,8 @@ export interface Set {
   id: Id
   weight?: number
   reps?: number
+  /** Present for TIME-tracked exercises (e.g. a plank hold) instead of reps. */
+  durationSeconds?: number
   rir?: number
   rpe?: number
   type: SetType

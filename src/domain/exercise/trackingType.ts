@@ -22,3 +22,8 @@ export function requiresWeight(trackingType: TrackingType): boolean {
 export function requiresReps(trackingType: TrackingType): boolean {
   return trackingType !== 'TIME'
 }
+
+/** Whether a set of this tracking type records a duration instead of reps. */
+export function requiresDuration(trackingType: TrackingType): boolean {
+  return trackingType === 'TIME'
+}

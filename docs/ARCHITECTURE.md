@@ -79,21 +79,24 @@ measurements. Derived numbers (volume, progress, PRs) are never persisted —
 they are computed on demand by analytics from source facts. See
 [DATA_MODEL.md](DATA_MODEL.md) for the rationale.
 
-## Current state (through Stage 4)
+## Current state (through Stage 5)
 
 `domain` (Stage 1), `persistence` (Stage 2), the workout-logging flow in
-`features/workout` and `features/exercises` (Stage 3), and routines in
-`features/routines` (Stage 4) have real code; see `docs/DATA_MODEL.md`
-and `docs/FITNESS_DOMAIN.md` for what's implemented. The exercise catalog
-(`ExercisesApi`, from `useExercises`) is owned by `App.tsx` and passed
-down to both the workout and routines features rather than fetched
-independently by each — see `docs/DECISIONS.md` D-018.
+`features/workout` and `features/exercises` (Stage 3), routines in
+`features/routines` (Stage 4), and history in `features/history`
+(Stage 5) have real code; see `docs/DATA_MODEL.md` and
+`docs/FITNESS_DOMAIN.md` for what's implemented. The exercise catalog
+(`ExercisesApi`, from `useExercises`) and the workout draft
+(`useWorkoutForm`) are both owned by `App.tsx` and passed down as props
+rather than each feature holding its own copy — see `docs/DECISIONS.md`
+D-018, D-021.
 
-`analytics`, the remaining `features/*` folders (history, progress,
-body), `components`, `hooks`, and `app/providers` are still empty
-directory skeletons (see `ROADMAP.md`). `app/routes.tsx` does not exist
-yet either: `app/App.tsx` renders the routines section and the workout
-form side by side on one page — no router is installed, and defining
-route paths ahead of a real multi-screen navigation need would commit to
-a URL scheme nothing needs yet. It is added when a stage actually
-introduces that need (see `docs/DECISIONS.md` D-007, D-017).
+`app/App.tsx` now switches between three sections (`workout` / `routines`
+/ `history`) via a plain `tab` state, not a router — see
+`docs/DECISIONS.md` D-021. `app/routes.tsx` still doesn't exist; a real
+router is added only when something needs an actual URL (deep links,
+browser back/forward), per D-007/D-017.
+
+`analytics`, the remaining `features/*` folders (progress, body),
+`components`, `hooks`, and `app/providers` are still empty directory
+skeletons (see `ROADMAP.md`).

@@ -206,3 +206,30 @@ confirmation step. This matches the expected usage (pick a routine
 *before* adding anything manually) and avoids building draft-merge or
 unsaved-changes-confirmation logic that Stage 4's scope doesn't call for;
 revisit only if real usage shows people losing work this way.
+
+## D-021 — In-app tabs instead of a router, for Stage 5's third section
+
+Stage 5 adds history as a third section (alongside workout logging and
+routines). Rather than stacking three potentially-long sections on one
+page, or finally adding a router, `App.tsx` now holds a `tab` state
+(`'workout' | 'routines' | 'history'`) and renders exactly one section at
+a time — no URL involved, no new dependency. Starting a workout from a
+routine also switches the tab to `'workout'` so the pre-populated form is
+immediately visible. `useExercises()` and `useWorkoutForm()` stay lifted
+in `App` (D-018) partly for the reason already given there, and now also
+so switching tabs doesn't re-fetch the catalog or lose the in-progress
+workout draft. This is still not "routing" in the D-007/D-017 sense — no
+deep links, no browser history entries — and gets replaced by a real
+router only when something actually needs those (e.g. sharing a link to
+one workout).
+
+## D-022 — `Set.durationSeconds` for TIME-tracked exercises
+
+Found while building the read-only history detail view: `Set` had no
+field to record a duration, so a `TIME`-tracked exercise (e.g. a plank)
+could not actually be logged — `SetRow` showed neither a weight nor a
+reps input for it, silently. Added `durationSeconds` to `Set` and
+`requiresDuration(trackingType)` to `domain/exercise/trackingType.ts`,
+symmetric with `requiresWeight`/`requiresReps`. This was a gap from Stage
+1/3, not a Stage 5 decision, but it's fixed here rather than left
+known-broken now that it's been found — see `docs/QA.md`.

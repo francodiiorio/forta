@@ -46,7 +46,7 @@ but is required for anything touching domain, analytics, persistence,
 migrations, import/export, or a core flow (see
 `.claude/agents/orchestrator.md`).
 
-## Coverage so far (through Stage 4)
+## Coverage so far (through Stage 5)
 
 Domain (Stage 1): tracking-type field rules, set-type classification,
 and the direct/indirect muscle involvement rule against the Bench Press
@@ -72,8 +72,18 @@ nested `<form>` (see `docs/DECISIONS.md` D-019) that silently no-opped a
 button click; worth remembering that "renders without errors" isn't the
 same as "the interaction actually does something."
 
+History (Stage 5): an App-level integration test navigates the tabs,
+creates a routine, starts a workout from it, saves, then switches to the
+history tab and asserts the workout appears and its detail shows the
+logged set. This stage also surfaced a real domain gap, not a Stage 5
+bug: `Set` had no field for `TIME`-tracked exercises, so they were
+unloggable since Stage 1/3 without anyone noticing — see
+`docs/DECISIONS.md` D-022. A regression test for TIME-tracked logging
+was added specifically because the original gap had no test that would
+have caught it.
+
 Not yet covered because the feature doesn't exist yet: analytics
-(Stage 6), routines (Stage 4), history (Stage 5). Each of those must not
+(Stage 6). Progress (Stage 7) and body measurements must not
 proceed without tests per the rules stated above.
 
 ## Commands
