@@ -117,10 +117,19 @@ still described `analytics` as an empty skeleton after Stage 6 had
 already filled it in — a reminder to re-read a doc's *current* claims
 when updating it, not just append to it.
 
-Not yet covered because the feature doesn't exist yet: body measurement
-logging (the domain entity exists since Stage 1, but no UI was scheduled
-for it — see `docs/PRODUCT.md`) must not proceed without tests per the
-rules stated above, whenever it's built.
+Post-roadmap IA overhaul: an App-level integration test covers the new
+Home dashboard reflecting a just-logged workout and a just-saved body
+weight entry, and `DataBackupSection.test.tsx` covers the import flow —
+valid backup accepted after explicit confirmation and replacing existing
+data, malformed backup rejected with the validation error surfaced in
+the UI, non-JSON file rejected, and cancel leaving stored data untouched.
+This stage also surfaced two real bugs: `HomeSection` was accidentally
+built with the same lifted-hook staleness mistake D-029 had already
+named and ruled out (D-036), and a fixed-position bottom nav didn't
+respect the content column's `max-width` on wide viewports (D-037). It
+also hit a real jsdom gap — `Blob`/`File.prototype.text()` doesn't exist
+in jsdom 27 even though it's a standard, long-supported browser API —
+polyfilled in test setup rather than worked around in app code (D-038).
 
 ## Commands
 

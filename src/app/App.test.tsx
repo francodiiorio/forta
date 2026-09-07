@@ -14,21 +14,28 @@ afterEach(async () => {
 })
 
 describe('App', () => {
-  it('renders the app shell defaulting to the workout logging tab', async () => {
+  it('renders the app shell defaulting to the home tab', async () => {
     render(<App />)
 
     expect(screen.getByRole('heading', { name: 'Forta' })).toBeInTheDocument()
-    expect(screen.getByRole('region', { name: 'Registrar entrenamiento' })).toBeInTheDocument()
-    expect(screen.queryByRole('region', { name: 'Rutinas' })).not.toBeInTheDocument()
-    expect(screen.queryByRole('region', { name: 'Historial' })).not.toBeInTheDocument()
-
-    await screen.findByText('No hay ejercicios todavía.')
+    expect(await screen.findByText('Todavía no registraste un entrenamiento')).toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Registrar entrenamiento' })).not.toBeInTheDocument()
   })
 
-  it('creates a routine, starts a workout from it, saves, and finds it in history', async () => {
+  it('navigates to Entrenar, defaulting to the Registrar view', async () => {
     render(<App />)
 
-    fireEvent.click(screen.getByRole('button', { name: 'Rutinas' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Entrenar' }))
+
+    expect(screen.getByRole('region', { name: 'Registrar entrenamiento' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Registrar' })).toHaveAttribute('aria-selected', 'true')
+  })
+
+  it('creates a routine, starts a workout from it, saves, and finds it everywhere it should', async () => {
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Entrenar' }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Rutinas' }))
     const routinesSection = screen.getByRole('region', { name: 'Rutinas' })
 
     // Create the exercise from the routine builder's picker, once the
@@ -50,7 +57,7 @@ describe('App', () => {
     fireEvent.click(within(routinesSection).getByRole('button', { name: 'Guardar rutina' }))
     expect(await within(routinesSection).findByText('Leg Day', { exact: false })).toBeInTheDocument()
 
-    // Starting a routine switches back to the workout tab automatically.
+    // Starting a routine switches the Entrenar tab back to Registrar automatically.
     fireEvent.click(within(routinesSection).getByRole('button', { name: 'Usar esta rutina' }))
     const workoutSection = await screen.findByRole('region', { name: 'Registrar entrenamiento' })
     expect(within(workoutSection).getByRole('heading', { name: 'Squat' })).toBeInTheDocument()
@@ -60,6 +67,12 @@ describe('App', () => {
     fireEvent.change(within(workoutSection).getByLabelText('Reps'), { target: { value: '5' } })
     fireEvent.click(within(workoutSection).getByRole('button', { name: 'Guardar entrenamiento' }))
     expect(await within(workoutSection).findByRole('status')).toHaveTextContent('Entrenamiento guardado.')
+
+    // Shows up on the home dashboard as today's completed workout.
+    fireEvent.click(screen.getByRole('button', { name: 'Inicio' }))
+    const todayCard = await screen.findByRole('region', { name: 'Entrenamiento de hoy' })
+    expect(within(todayCard).getByText('Completado', { exact: false })).toBeInTheDocument()
+    expect(within(todayCard).getByRole('heading', { name: 'Squat' })).toBeInTheDocument()
 
     // The saved workout shows up in history, with its exercise and set.
     fireEvent.click(screen.getByRole('button', { name: 'Historial' }))
@@ -98,5 +111,22 @@ describe('App', () => {
     expect(muscleCells[1]).toHaveTextContent('1') // directSets
     expect(muscleCells[2]).toHaveTextContent('0') // indirectSets
     expect(muscleCells[3]).toHaveTextContent('1') // sessions
+  })
+
+  it('logs body weight from Ajustes and reflects it on the home dashboard', async () => {
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Ajustes' }))
+    const weightSection = screen.getByRole('region', { name: 'Peso corporal' })
+
+    await within(weightSection).findByText('Todavía no registraste tu peso.')
+    fireEvent.change(within(weightSection).getByLabelText('Peso (kg)'), { target: { value: '82.5' } })
+    fireEvent.click(within(weightSection).getByRole('button', { name: 'Guardar' }))
+
+    expect(await within(weightSection).findByText('82.5')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Inicio' }))
+    const bodyWeightCard = await screen.findByRole('region', { name: 'Peso corporal' })
+    expect(await within(bodyWeightCard).findByText('82.5')).toBeInTheDocument()
   })
 })

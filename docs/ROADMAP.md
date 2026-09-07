@@ -65,6 +65,17 @@ new dependency), and display-number rounding (D-034). Fixed a real CSS
 specificity bug found while testing: hovering the active tab made its
 label invisible (D-033).
 
+## Post-roadmap — Information architecture overhaul
+
+Not one of the original 8 stages; done afterward in response to explicit
+product feedback that the UI was too bare. Reworked navigation into five
+bottom tabs with a new Home dashboard as the default screen (D-035), and
+built the first UI for two capabilities that existed underneath since
+earlier stages but were never exposed: body-weight logging
+(`BodyMeasurement`, Stage 1) and data export/import
+(`persistence/backup`, Stage 2) — both now live under a new Ajustes tab.
+See `docs/ARCHITECTURE.md` and `docs/DECISIONS.md` D-035–D-038.
+
 ## Explicitly deferred beyond this roadmap
 
 Live/active workout tracking, rest timer, notifications, backend,

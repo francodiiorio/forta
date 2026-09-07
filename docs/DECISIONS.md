@@ -386,3 +386,61 @@ drops a trailing `.0`) for on-screen display only — e.g. estimated 1RM
 full-precision numbers; rounding happens once, at the UI boundary, so a
 future consumer that needs more precision (e.g. comparing two estimates)
 isn't silently working with an already-rounded value.
+
+## D-035 — Information architecture reworked: 5-tab bottom nav, Home as default
+
+Prompted by explicit product feedback that the UI was too bare and needed
+a real home screen, dedicated pages, and a settings page. `app/App.tsx`
+now has five tabs — `Inicio`, `Entrenar`, `Historial`, `Progreso`,
+`Ajustes` — shown via a bottom icon+label nav (mobile-app convention)
+instead of the earlier top text-tab bar. `Registrar` and `Rutinas` are
+merged under `Entrenar` behind a segmented control
+(`features/workout/TrainSection.tsx`) rather than getting a tab each,
+keeping the nav at five items instead of six; starting a workout from a
+routine switches that internal segment back to `Registrar`, same
+behavior as before, just one level deeper. `Inicio` is a new dashboard
+(`features/home/HomeSection.tsx`) that composes only *existing* analytics
+functions (today's workout, lifetime totals, a 30-day activity grid,
+volume trend, this week's sets, body weight) — it introduces no new
+formulas, only a new arrangement of ones already decided and tested.
+
+## D-036 — `Home`'s workouts must not be lifted either (same reasoning as D-029)
+
+While building `HomeSection`, `useWorkouts()` was initially called once
+in `App.tsx` and passed down as a prop — the same mistake D-029
+explicitly named as the wrong call for a tab that unmounts when
+inactive. It shipped with exactly the staleness bug D-029 predicted: a
+workout saved in `Entrenar` didn't appear on `Inicio` until a full page
+reload, because nothing told the lifted instance to refetch. Fixed by
+having `HomeSection` call `useWorkouts()` itself, consistent with
+`HistorySection` and `ProgressSection`. Recorded separately from D-029
+because it's the same mistake recurring, not a new one — worth noting
+that having written the rule down once didn't stop it from being missed
+in the very next feature that needed it.
+
+## D-037 — Fixed a bottom-nav layout bug: fixed-position elements ignore a centered max-width
+
+Found while testing the new layout: `.bottom-nav` used
+`position: fixed; left: 0; right: 0`, which pins it to the *viewport*
+edges regardless of how the page content is laid out. Meanwhile the
+content column (`.app-content`) is `max-width: 640px; margin: 0 auto`.
+On any viewport wider than 640px this produced a nav bar spanning the
+full window width while the content above it was a narrower, centered
+column — nav and content visually misaligned. Fixed by giving
+`.bottom-nav` the same `max-width: 640px; margin: 0 auto`. General
+lesson: a fixed/sticky element's positioning is relative to the
+viewport, not to a max-width ancestor, so it needs its own explicit
+width constraint to stay visually aligned with constrained content.
+
+## D-038 — jsdom's `Blob`/`File` has no `.text()`; polyfilled in test setup, not app code
+
+Found writing a test for the data-import flow: `File.prototype.text()`
+— a real, long-standing, Baseline browser API — throws
+`TypeError: file.text is not a function` under jsdom 27, because jsdom's
+own `Blob`/`File` implementation only has `slice`, `size`, and `type`;
+not `text()`, `arrayBuffer()`, or `stream()` either. The app code
+(`DataBackupSection.tsx`) is correct as written — this is a jsdom gap,
+not a bug to work around in production code. Polyfilled in
+`src/test/setup.ts` using `FileReader` (the one async Blob-reading API
+jsdom does implement), the same category of fix as `fake-indexeddb`
+patching jsdom's missing IndexedDB support.

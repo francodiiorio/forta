@@ -79,35 +79,45 @@ measurements. Derived numbers (volume, progress, PRs) are never persisted —
 they are computed on demand by analytics from source facts. See
 [DATA_MODEL.md](DATA_MODEL.md) for the rationale.
 
-## Current state (through Stage 8 — all planned stages done)
+## Current state (through the post-Stage-8 UI overhaul)
 
-`domain` (Stage 1), `persistence` (Stage 2), the workout-logging flow in
+`domain` (Stage 1), `persistence` (Stage 2), workout logging in
 `features/workout` and `features/exercises` (Stage 3), routines in
 `features/routines` (Stage 4), history in `features/history` (Stage 5),
 `analytics` (Stage 6: volume, muscle workload/frequency, PRs, estimated
 1RM, period rollups; Stage 7: progression) and `features/progress`
 (Stage 7) all have real code; see `docs/DATA_MODEL.md`,
 `docs/FITNESS_DOMAIN.md`, and `docs/ANALYTICS.md` for what's implemented.
-Stage 8 added the visual design system (`src/index.css`, D-031) and two
-dependency-free chart components (`src/components/BarChart.tsx`,
-`LineChart.tsx`, D-032) — `components/` now has real content, not just
-the placeholder it was through Stage 7.
+
+After Stage 8's initial visual pass (design tokens in `src/index.css`,
+D-031; dependency-free chart components, D-032), the information
+architecture itself was reworked (D-035–D-037): a five-tab bottom nav
+(`Inicio` / `Entrenar` / `Historial` / `Progreso` / `Ajustes`) replaces
+the earlier top text-tab bar, with a new `features/home` dashboard as the
+default screen and `Registrar`/`Rutinas` merged under `Entrenar` behind a
+segmented control. `features/settings` and `features/body` are new:
+body-weight logging (the `BodyMeasurement` entity has existed since
+Stage 1, but never had UI — see `docs/PRODUCT.md`) and the export/import
+UI for the backup functions built in Stage 2 (`persistence/backup`) both
+live there. `src/components/icons.tsx` and `ActivityHeatmap.tsx` extend
+the dependency-free approach from D-032 to navigation icons and the
+30-day activity grid.
 
 State-sharing across `app/App.tsx`'s tabs follows one rule: lift a hook
 only when a consumer needs to survive a tab switch (a draft, or avoiding
 a refetch flicker on data the active tab is already showing) — otherwise
 each feature loads its own. The exercise catalog (`ExercisesApi`, from
 `useExercises`) and the workout draft (`useWorkoutForm`) are lifted for
-that reason (D-018, D-021); `useWorkouts` (history and progress) is not
-— each of those tabs unmounts when inactive, so loading fresh on every
-mount is both simpler and avoids the staleness that lifting would cause
-(D-029).
+that reason (D-018, D-021); `useWorkouts` (home, history, progress) is
+not — each of those tabs unmounts when inactive, so loading fresh on
+every mount is both simpler and avoids the staleness that lifting would
+cause (D-029). `Home` originally lifted `useWorkouts` by mistake when it
+was introduced and shipped with exactly that staleness bug; see D-036.
 
-`app/App.tsx` switches between four sections (`workout` / `routines` /
-`history` / `progress`) via a plain `tab` state, not a router — see
-`docs/DECISIONS.md` D-021. `app/routes.tsx` still doesn't exist; a real
-router is added only when something needs an actual URL (deep links,
-browser back/forward), per D-007/D-017.
+`app/App.tsx` switches between its five sections via a plain `tab` state,
+not a router — see `docs/DECISIONS.md` D-021. `app/routes.tsx` still
+doesn't exist; a real router is added only when something needs an
+actual URL (deep links, browser back/forward), per D-007/D-017.
 
 `features/body` (body measurement logging — see `docs/PRODUCT.md`, never
 scheduled a stage) and `app/providers` (no cross-cutting React context

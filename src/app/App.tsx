@@ -1,61 +1,62 @@
 import { useState } from 'react'
+import { ClockIcon, DumbbellIcon, GearIcon, HomeIcon, TrendIcon } from '../components/icons'
 import { useExercises } from '../features/exercises/useExercises'
 import { HistorySection } from '../features/history/HistorySection'
+import { HomeSection } from '../features/home/HomeSection'
 import { ProgressSection } from '../features/progress/ProgressSection'
-import { RoutinesSection } from '../features/routines/RoutinesSection'
-import { LogWorkoutForm } from '../features/workout/LogWorkoutForm'
+import { SettingsSection } from '../features/settings/SettingsSection'
+import { TrainSection } from '../features/workout/TrainSection'
 import { useWorkoutForm } from '../features/workout/useWorkoutForm'
 
 const TABS = [
-  { key: 'workout', label: 'Registrar' },
-  { key: 'routines', label: 'Rutinas' },
-  { key: 'history', label: 'Historial' },
-  { key: 'progress', label: 'Progreso' },
+  { key: 'home', label: 'Inicio', Icon: HomeIcon },
+  { key: 'train', label: 'Entrenar', Icon: DumbbellIcon },
+  { key: 'history', label: 'Historial', Icon: ClockIcon },
+  { key: 'progress', label: 'Progreso', Icon: TrendIcon },
+  { key: 'settings', label: 'Ajustes', Icon: GearIcon },
 ] as const
 
 type Tab = (typeof TABS)[number]['key']
 
 export function App() {
-  const [tab, setTab] = useState<Tab>('workout')
+  const [tab, setTab] = useState<Tab>('home')
 
-  // Shared once here so the workout and routines features never hold two
-  // independent (and independently stale) copies of the exercise catalog.
+  // Shared once here so features never hold independent (and
+  // independently stale) copies of the exercise catalog or the
+  // in-progress workout draft — see D-018, D-021.
   const exercisesApi = useExercises()
   const workoutForm = useWorkoutForm()
 
   return (
-    <main className="app">
-      <h1 className="app-title">Forta</h1>
+    <div className="app">
+      <main className="app-content">
+        {tab === 'home' && <HomeSection exercisesApi={exercisesApi} onGoToWorkout={() => setTab('train')} />}
 
-      <nav className="tab-bar" aria-label="Secciones">
-        {TABS.map(({ key, label }) => (
+        {tab === 'train' && (
+          <TrainSection form={workoutForm} exercisesApi={exercisesApi} onStartRoutine={workoutForm.startFromRoutine} />
+        )}
+
+        {tab === 'history' && <HistorySection exercisesApi={exercisesApi} />}
+
+        {tab === 'progress' && <ProgressSection exercisesApi={exercisesApi} />}
+
+        {tab === 'settings' && <SettingsSection />}
+      </main>
+
+      <nav className="bottom-nav" aria-label="Secciones">
+        {TABS.map(({ key, label, Icon }) => (
           <button
             key={key}
             type="button"
-            className="tab-button"
+            className="bottom-nav-button"
             aria-current={tab === key}
             onClick={() => setTab(key)}
           >
-            {label}
+            <Icon className="bottom-nav-icon" />
+            <span>{label}</span>
           </button>
         ))}
       </nav>
-
-      {tab === 'workout' && <LogWorkoutForm form={workoutForm} exercisesApi={exercisesApi} />}
-
-      {tab === 'routines' && (
-        <RoutinesSection
-          exercisesApi={exercisesApi}
-          onStartRoutine={(routine, catalog) => {
-            workoutForm.startFromRoutine(routine, catalog)
-            setTab('workout')
-          }}
-        />
-      )}
-
-      {tab === 'history' && <HistorySection exercisesApi={exercisesApi} />}
-
-      {tab === 'progress' && <ProgressSection exercisesApi={exercisesApi} />}
-    </main>
+    </div>
   )
 }
