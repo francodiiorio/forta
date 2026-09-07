@@ -686,3 +686,23 @@ position. Mid-scroll, it softens whatever real content is currently
 cut off into the glass instead of a hard edge; at the true end, it just
 enhances the existing padding. One rule handles both cases — no scroll-
 position tracking needed to decide when to show it.
+
+Still not convincing in dark mode after that pass ("a mi no me
+convence" — still looked like a murky smudge, not glass). Root cause:
+`--glass-bg` (dark) was `rgba(30, 30, 34, ...)`, barely lighter than
+`--surface` (`#161618`) and `--bg` (`#000000`) — blurring dark,
+low-contrast monochrome content behind a same-tone dark panel has
+almost no signal to reveal, so it just reads as noise. The reference
+image only worked because it was light mode with real luminance
+contrast in the blurred content; this app's dark mode had neither.
+
+Fix wasn't more blur or less opacity (already tried, D-048's first
+pass) — it was making the panel itself distinctly *lighter* than the
+page behind it, the way iOS's own dark-mode blur materials are a
+lifted mid-gray, never the same near-black as the background. Set
+`--glass-bg` (dark) to `rgba(88, 88, 96, 0.5)` and darkened
+`--glass-backdrop` to `rgba(0, 0, 0, 0.55)` for more contrast against
+it — the panel now reads as a distinct raised pane rather than a
+same-tone smudge. Light mode's glass was already lighter than its
+(light gray) background by construction, so it didn't have this
+problem and wasn't touched.
