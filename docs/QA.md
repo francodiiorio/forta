@@ -46,12 +46,26 @@ but is required for anything touching domain, analytics, persistence,
 migrations, import/export, or a core flow (see
 `.claude/agents/orchestrator.md`).
 
-## Stage 0 baseline
+## Coverage so far (through Stage 3)
 
-At the end of Stage 0, the only tests that exist are a smoke test for the
-`App` shell and a unit test for `generateId`. This is intentionally
-minimal — there is no domain, analytics, or persistence code yet to test.
-Stage 1 must not proceed without domain tests per rule stated above.
+Domain (Stage 1): tracking-type field rules, set-type classification,
+and the direct/indirect muscle involvement rule against the Bench Press
+example from `docs/FITNESS_DOMAIN.md`.
+
+Persistence (Stage 2): schema/migration creation and the missing-
+migration failure path, generic repository CRUD, and backup export/
+import (round-trip, replace-not-merge, malformed input, unsupported
+future format version).
+
+Workout logging (Stage 3): an integration test drives the real flow —
+create an exercise inline, add a set, save — and asserts against the
+persisted `Workout`, not just the UI. Manually verified in a real browser
+(golden path, data surviving a reload, no console errors) since component
+tests alone don't confirm a feature works end-to-end.
+
+Not yet covered because the feature doesn't exist yet: analytics
+(Stage 6), routines (Stage 4), history (Stage 5). Each of those must not
+proceed without tests per the rules stated above.
 
 ## Commands
 

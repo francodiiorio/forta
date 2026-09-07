@@ -23,9 +23,12 @@ IndexedDB schema, repositories, `schemaVersion`, migrations, import,
 export, validation. No UI beyond what's needed to exercise repositories in
 tests.
 
-## Stage 3 — Workout logging
+## Stage 3 — Workout logging (done)
 
-Flow: add workout → date → exercises → sets → weight/reps → save.
+Flow: add workout → date → exercises → sets → weight/reps → save. Includes
+a minimal inline exercise-catalog creation form (see
+`docs/DECISIONS.md` D-016) — logging a workout needs exercises to pick
+from, and there was no earlier stage to create them in.
 
 ## Stage 4 — Routines
 

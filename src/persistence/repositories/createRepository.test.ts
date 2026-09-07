@@ -1,4 +1,3 @@
-import 'fake-indexeddb/auto'
 import { afterEach, describe, expect, it } from 'vitest'
 import { closeDatabase } from '../indexedDb/openDatabase'
 import { DATABASE_NAME, STORE_NAMES } from '../indexedDb/schema'

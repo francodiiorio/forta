@@ -1,4 +1,3 @@
-import 'fake-indexeddb/auto'
 import { describe, expect, it } from 'vitest'
 import { STORE_NAMES } from '../indexedDb/schema'
 import { runMigrations } from './migrations'

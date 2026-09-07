@@ -79,20 +79,18 @@ measurements. Derived numbers (volume, progress, PRs) are never persisted —
 they are computed on demand by analytics from source facts. See
 [DATA_MODEL.md](DATA_MODEL.md) for the rationale.
 
-## Current state (through Stage 2)
+## Current state (through Stage 3)
 
-`domain` (Stage 1) and `persistence` (Stage 2) have real code; see
-`docs/DATA_MODEL.md` and `docs/FITNESS_DOMAIN.md` for what's implemented.
+`domain` (Stage 1), `persistence` (Stage 2), and the workout-logging flow
+in `features/workout` and `features/exercises` (Stage 3) have real code;
+see `docs/DATA_MODEL.md` and `docs/FITNESS_DOMAIN.md` for what's
+implemented.
 
-`analytics`, `features`, `components`, `hooks`, and `app/providers` are
-still empty directory skeletons (see `ROADMAP.md`) — present as folders so
-the layering is visible, with no speculative code inside. `app/routes.tsx`
-does not exist yet either: no router is installed, and defining route
-paths ahead of any navigable feature would commit to a URL scheme before
-`product-designer` and `frontend-engineer` have a reason to. It is added
-when a stage actually introduces navigation (see `docs/DECISIONS.md`
-D-007).
-
-The React shell (`app/App.tsx`) is still a static, prop-free component —
-no feature UI is wired up yet, and nothing in `src/app`/`src/features`
-calls into `persistence` or `domain` until Stage 3.
+`analytics`, the remaining `features/*` folders (routines, history,
+progress, body), `components`, `hooks`, and `app/providers` are still
+empty directory skeletons (see `ROADMAP.md`). `app/routes.tsx` does not
+exist yet either: `app/App.tsx` renders `LogWorkoutForm` directly, because
+it is still the only feature screen — no router is installed, and
+defining route paths ahead of a second screen would commit to a URL
+scheme nothing needs yet. It is added when a stage actually introduces a
+second screen to navigate to (see `docs/DECISIONS.md` D-007).

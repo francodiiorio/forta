@@ -145,3 +145,31 @@ fields (e.g. that a `Set`'s `weight` is a sane number) — that validation
 belongs where data first enters the system (forms in Stage 3), not
 duplicated here where it could quietly drift out of sync with the real
 rules.
+
+## D-015 — Workout logging captures a date, not separate start/end times
+
+The "log a workout" form asks for one date, not a start time and an end
+time. `startedAt` and `completedAt` are both set to that date at
+midnight. This matches the product's after-the-fact, non-live logging
+model (see `docs/PRODUCT.md`) — nothing in v1 needs session duration, so
+asking the user to enter times they'd have to guess or reconstruct
+would add friction with no payoff. If a future stage needs duration,
+that's a product decision to revisit, not something to guess now.
+
+## D-016 — Minimal exercise-catalog creation lives inside Stage 3
+
+The roadmap never dedicated a stage to building the exercise catalog, but
+logging a workout requires picking an exercise that has to exist first.
+Stage 3 therefore includes the minimum needed to unblock that: an
+exercise picker backed by a create form covering every required
+`Exercise` field. A fuller exercise-management screen (edit, delete,
+browse/filter the catalog) stays deferred to `features/exercises` work
+in a later stage — this is create-and-pick only, not catalog management.
+
+## D-017 — `App.tsx` renders the workout flow directly, still no router
+
+Stage 3 adds exactly one feature screen (logging a workout), so
+`app/App.tsx` renders `LogWorkoutForm` directly rather than introducing
+routing for a single destination. This extends D-007's reasoning: a
+router (and `app/routes.tsx`) gets added when a second screen (e.g.
+Stage 5's history view) actually needs to be navigated to, not before.

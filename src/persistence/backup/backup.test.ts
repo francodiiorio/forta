@@ -1,4 +1,3 @@
-import 'fake-indexeddb/auto'
 import { afterEach, describe, expect, it } from 'vitest'
 import type { Exercise } from '../../domain/exercise/exercise'
 import { closeDatabase } from '../indexedDb/openDatabase'
