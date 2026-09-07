@@ -173,3 +173,36 @@ Stage 3 adds exactly one feature screen (logging a workout), so
 routing for a single destination. This extends D-007's reasoning: a
 router (and `app/routes.tsx`) gets added when a second screen (e.g.
 Stage 5's history view) actually needs to be navigated to, not before.
+Stage 4 adds the routines section to the same page rather than a second
+route, for the same reason.
+
+## D-018 — Exercise catalog state is lifted to App, not fetched per-feature
+
+`useExercises()` is called once in `App.tsx` and passed down as props
+(`ExercisesApi`) to both the workout and routines features. An earlier
+version had each feature call the hook independently; that would let two
+mounted-at-once features (both visible on the same page — see D-017) hold
+divergent copies of the catalog within one session, e.g. an exercise
+created from the routine builder not appearing in the workout form's
+picker without an unrelated reload. `ExercisePicker` is shared,
+props-driven UI, not a data-fetching component itself.
+
+## D-019 — `ExercisePicker`'s host must not itself be a `<form>`
+
+`ExercisePicker` can render `ExerciseForm` (a `<form>`) when creating an
+exercise inline. Nested `<form>` elements are invalid HTML and silently
+break submission (found while building the routine screen: `RoutineForm`
+originally wrapped itself in a `<form>`, which broke its own "Guardar
+rutina" click once `ExerciseForm` was open — no error, the outer submit
+handler just never ran). `RoutineForm` and `LogWorkoutForm` both use a
+plain container with `type="button"` actions instead. Any future feature
+that embeds `ExercisePicker` must do the same.
+
+## D-020 — Starting a workout from a routine replaces the current draft
+
+Clicking "Usar esta rutina" replaces whatever exercises/sets were already
+in the workout-logging draft, rather than merging. There's no
+confirmation step. This matches the expected usage (pick a routine
+*before* adding anything manually) and avoids building draft-merge or
+unsaved-changes-confirmation logic that Stage 4's scope doesn't call for;
+revisit only if real usage shows people losing work this way.

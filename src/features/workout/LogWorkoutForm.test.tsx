@@ -1,9 +1,20 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
+import { useExercises } from '../exercises/useExercises'
 import { closeDatabase } from '../../persistence/indexedDb/openDatabase'
 import { DATABASE_NAME } from '../../persistence/indexedDb/schema'
 import { workoutRepository } from '../../persistence/repositories/workoutRepository'
 import { LogWorkoutForm } from './LogWorkoutForm'
+import { useWorkoutForm } from './useWorkoutForm'
+
+// LogWorkoutForm is presentational (props-driven, shared with the
+// routines feature at the App level) — this harness wires up the real
+// hooks so the test still exercises real IndexedDB reads/writes.
+function Harness() {
+  const exercisesApi = useExercises()
+  const form = useWorkoutForm()
+  return <LogWorkoutForm form={form} exercisesApi={exercisesApi} />
+}
 
 afterEach(async () => {
   await closeDatabase()
@@ -16,7 +27,7 @@ afterEach(async () => {
 
 describe('LogWorkoutForm', () => {
   it('creates an exercise inline, logs a set, and saves the workout', async () => {
-    render(<LogWorkoutForm />)
+    render(<Harness />)
 
     await screen.findByText('No hay ejercicios todavía.')
     fireEvent.click(screen.getByRole('button', { name: 'Crear ejercicio' }))
@@ -49,7 +60,7 @@ describe('LogWorkoutForm', () => {
   })
 
   it('keeps the save button disabled until at least one exercise is added', async () => {
-    render(<LogWorkoutForm />)
+    render(<Harness />)
 
     expect(screen.getByRole('button', { name: 'Guardar entrenamiento' })).toBeDisabled()
   })

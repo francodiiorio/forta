@@ -46,7 +46,7 @@ but is required for anything touching domain, analytics, persistence,
 migrations, import/export, or a core flow (see
 `.claude/agents/orchestrator.md`).
 
-## Coverage so far (through Stage 3)
+## Coverage so far (through Stage 4)
 
 Domain (Stage 1): tracking-type field rules, set-type classification,
 and the direct/indirect muscle involvement rule against the Bench Press
@@ -62,6 +62,15 @@ create an exercise inline, add a set, save — and asserts against the
 persisted `Workout`, not just the UI. Manually verified in a real browser
 (golden path, data surviving a reload, no console errors) since component
 tests alone don't confirm a feature works end-to-end.
+
+Routines (Stage 4): an integration test creates an exercise from the
+routine builder, saves a routine, starts a workout from it, and asserts
+the saved workout carries `routineId` and the routine's exercise with a
+freshly-added set. Also manually verified in a real browser. This stage
+also caught a real bug that a passing test suite alone hadn't yet — a
+nested `<form>` (see `docs/DECISIONS.md` D-019) that silently no-opped a
+button click; worth remembering that "renders without errors" isn't the
+same as "the interaction actually does something."
 
 Not yet covered because the feature doesn't exist yet: analytics
 (Stage 6), routines (Stage 4), history (Stage 5). Each of those must not

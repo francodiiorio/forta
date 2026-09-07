@@ -79,18 +79,21 @@ measurements. Derived numbers (volume, progress, PRs) are never persisted —
 they are computed on demand by analytics from source facts. See
 [DATA_MODEL.md](DATA_MODEL.md) for the rationale.
 
-## Current state (through Stage 3)
+## Current state (through Stage 4)
 
-`domain` (Stage 1), `persistence` (Stage 2), and the workout-logging flow
-in `features/workout` and `features/exercises` (Stage 3) have real code;
-see `docs/DATA_MODEL.md` and `docs/FITNESS_DOMAIN.md` for what's
-implemented.
+`domain` (Stage 1), `persistence` (Stage 2), the workout-logging flow in
+`features/workout` and `features/exercises` (Stage 3), and routines in
+`features/routines` (Stage 4) have real code; see `docs/DATA_MODEL.md`
+and `docs/FITNESS_DOMAIN.md` for what's implemented. The exercise catalog
+(`ExercisesApi`, from `useExercises`) is owned by `App.tsx` and passed
+down to both the workout and routines features rather than fetched
+independently by each — see `docs/DECISIONS.md` D-018.
 
-`analytics`, the remaining `features/*` folders (routines, history,
-progress, body), `components`, `hooks`, and `app/providers` are still
-empty directory skeletons (see `ROADMAP.md`). `app/routes.tsx` does not
-exist yet either: `app/App.tsx` renders `LogWorkoutForm` directly, because
-it is still the only feature screen — no router is installed, and
-defining route paths ahead of a second screen would commit to a URL
-scheme nothing needs yet. It is added when a stage actually introduces a
-second screen to navigate to (see `docs/DECISIONS.md` D-007).
+`analytics`, the remaining `features/*` folders (history, progress,
+body), `components`, `hooks`, and `app/providers` are still empty
+directory skeletons (see `ROADMAP.md`). `app/routes.tsx` does not exist
+yet either: `app/App.tsx` renders the routines section and the workout
+form side by side on one page — no router is installed, and defining
+route paths ahead of a real multi-screen navigation need would commit to
+a URL scheme nothing needs yet. It is added when a stage actually
+introduces that need (see `docs/DECISIONS.md` D-007, D-017).

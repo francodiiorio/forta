@@ -1,15 +1,16 @@
 import { useState } from 'react'
 import type { Exercise } from '../../domain/exercise/exercise'
 import { ExerciseForm } from './ExerciseForm'
-import { useExercises } from './useExercises'
+import type { ExercisesApi } from './useExercises'
 
 interface ExercisePickerProps {
+  exercisesApi: ExercisesApi
   onPick: (exercise: Exercise) => void
 }
 
 /** Pick an exercise from the catalog, or create one inline if it doesn't exist yet. */
-export function ExercisePicker({ onPick }: ExercisePickerProps) {
-  const { exercises, loading, createExercise } = useExercises()
+export function ExercisePicker({ exercisesApi, onPick }: ExercisePickerProps) {
+  const { exercises, loading, createExercise } = exercisesApi
   const [creating, setCreating] = useState(false)
 
   if (creating) {

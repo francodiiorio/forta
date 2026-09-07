@@ -1,9 +1,15 @@
+import type { ExercisesApi } from '../exercises/useExercises'
 import { ExercisePicker } from '../exercises/ExercisePicker'
-import { useWorkoutForm } from './useWorkoutForm'
+import type { WorkoutFormApi } from './useWorkoutForm'
 import { WorkoutExerciseCard } from './WorkoutExerciseCard'
 
+interface LogWorkoutFormProps {
+  form: WorkoutFormApi
+  exercisesApi: ExercisesApi
+}
+
 /** Log a completed workout: date, exercises, sets, weight/reps, save. */
-export function LogWorkoutForm() {
+export function LogWorkoutForm({ form, exercisesApi }: LogWorkoutFormProps) {
   const {
     date,
     setDate,
@@ -18,7 +24,7 @@ export function LogWorkoutForm() {
     canSave,
     save,
     lastSavedAt,
-  } = useWorkoutForm()
+  } = form
 
   return (
     <section aria-label="Registrar entrenamiento">
@@ -41,7 +47,7 @@ export function LogWorkoutForm() {
         />
       ))}
 
-      <ExercisePicker onPick={addExercise} />
+      <ExercisePicker exercisesApi={exercisesApi} onPick={addExercise} />
 
       <label>
         Notas

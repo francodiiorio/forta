@@ -30,9 +30,11 @@ a minimal inline exercise-catalog creation form (see
 `docs/DECISIONS.md` D-016) — logging a workout needs exercises to pick
 from, and there was no earlier stage to create them in.
 
-## Stage 4 — Routines
+## Stage 4 — Routines (done)
 
-Create and reuse routines when starting a workout.
+Create and reuse routines when starting a workout. Starting a workout
+from a routine replaces the current draft rather than merging (see
+`docs/DECISIONS.md` D-020).
 
 ## Stage 5 — History
 
