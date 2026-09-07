@@ -82,6 +82,11 @@ real desktop layout — a sidebar nav and a two-column Home grid above a
 900px breakpoint — since the app had only ever been designed for a
 mobile-width viewport up to that point.
 
+A further product-feedback pass (D-042) added `Perfil` as a sixth nav
+tab, holding static profile info (a new `UserProfile` entity — height,
+for now) and the body-weight logging UI moved out of Ajustes. Ajustes
+keeps only data export/import.
+
 ## Explicitly deferred beyond this roadmap
 
 Live/active workout tracking, rest timer, notifications, backend,

@@ -491,3 +491,39 @@ exact-values table on purpose (D-030), where individual bars/points
 read better than a smoothed area. Two visual treatments for the same
 underlying data, chosen deliberately per how precisely each view needs
 to be read, not an inconsistency.
+
+## D-042 — `Perfil` is a sixth nav tab, separate from `Ajustes`; new `UserProfile` entity
+
+Product feedback: body-weight logging didn't belong buried under a
+generic "Ajustes" page, and the app needed somewhere to put static
+personal data like height (as opposed to `BodyMeasurement`, which is a
+time series). Rather than nest this behind a segmented control inside
+the existing Ajustes tab (the pattern `TrainSection` uses for
+Registrar/Rutinas — see D-035), added `Perfil` as its own sixth
+bottom-nav tab / sidebar entry, explicitly chosen over the
+segmented-control option: body weight and profile info are things a
+user checks independently of data export/import, not two views of the
+same task the way logging and routines are.
+
+New `UserProfile` domain type (`domain/profile/userProfile.ts`): a
+single record keyed by the fixed id `USER_PROFILE_ID` rather than a
+generated one, since the app has exactly one user. Currently just
+`height`; other static fields (if any) get added to this type when
+there's a concrete product decision to add them, not speculatively.
+Persisted in its own `userProfile` IndexedDB store (schema version 2).
+
+`BodyWeightSection` moved from `features/settings` (nested under
+`features/body`) to `features/profile`; `useBodyMeasurements` and
+`BodyWeightCard` stay in `features/body` since `BodyWeightCard` is a
+Home dashboard widget, not a Perfil concern, and both features already
+depend on it.
+
+Backup format: `BackupData` gained `userProfile: UserProfile[]` — an
+array like every other entity list (holding 0 or 1 records) rather than
+a special-cased singleton field, so `exportBackup`/`importBackup` don't
+need a second code path. `validateBackupFile` treats a missing
+`userProfile` key as `[]` rather than a validation error, since backups
+taken before this change don't have it — an additive, backward-
+compatible change to the same `BACKUP_FORMAT_VERSION` (no bump needed;
+consistent with D-002's independence between schema and backup
+versioning).

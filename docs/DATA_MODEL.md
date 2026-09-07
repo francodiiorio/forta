@@ -14,7 +14,7 @@ Persist what happened. Never persist a computed aggregate.
 
 Persisted (facts):
 
-- `workouts`, `exercises`, `sets`, `routines`, `bodyMeasurements`
+- `workouts`, `exercises`, `sets`, `routines`, `bodyMeasurements`, `userProfile`
 
 Never persisted (derived — recomputed by analytics on demand):
 
@@ -123,6 +123,17 @@ need a breaking shape change later.
 | `thighLeft` / `thighRight` | `number \| undefined` | |
 | `calfLeft` / `calfRight` | `number \| undefined` | |
 | `notes` | `string \| undefined` | |
+
+### UserProfile
+
+Static personal data — a single record, not a time series (see
+`BodyMeasurement` for values that change over time). Keyed by a fixed id
+rather than a generated one, since this app has exactly one user.
+
+| Field | Type | Notes |
+|---|---|---|
+| `id` | `Id` | always `'profile'` (`USER_PROFILE_ID`) |
+| `height` | `number \| undefined` | centimeters |
 
 ## Relationships
 

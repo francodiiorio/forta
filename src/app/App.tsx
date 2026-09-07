@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { ClockIcon, DumbbellIcon, GearIcon, HomeIcon, TrendIcon } from '../components/icons'
+import { ClockIcon, DumbbellIcon, GearIcon, HomeIcon, TrendIcon, UserIcon } from '../components/icons'
 import { useExercises } from '../features/exercises/useExercises'
 import { HistorySection } from '../features/history/HistorySection'
 import { HomeSection } from '../features/home/HomeSection'
+import { ProfileSection } from '../features/profile/ProfileSection'
 import { ProgressSection } from '../features/progress/ProgressSection'
 import { SettingsSection } from '../features/settings/SettingsSection'
 import { TrainSection } from '../features/workout/TrainSection'
@@ -13,6 +14,7 @@ const TABS = [
   { key: 'train', label: 'Entrenar', Icon: DumbbellIcon },
   { key: 'history', label: 'Historial', Icon: ClockIcon },
   { key: 'progress', label: 'Progreso', Icon: TrendIcon },
+  { key: 'profile', label: 'Perfil', Icon: UserIcon },
   { key: 'settings', label: 'Ajustes', Icon: GearIcon },
 ] as const
 
@@ -39,6 +41,8 @@ export function App() {
         {tab === 'history' && <HistorySection exercisesApi={exercisesApi} />}
 
         {tab === 'progress' && <ProgressSection exercisesApi={exercisesApi} />}
+
+        {tab === 'profile' && <ProfileSection />}
 
         {tab === 'settings' && <SettingsSection />}
       </main>

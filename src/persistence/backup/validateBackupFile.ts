@@ -45,7 +45,7 @@ export function validateBackupFile(input: unknown): BackupFile {
     throw new BackupValidationError('Backup file is missing "data".')
   }
 
-  const { exercises, workouts, routines, bodyMeasurements } = data as Record<string, unknown>
+  const { exercises, workouts, routines, bodyMeasurements, userProfile } = data as Record<string, unknown>
 
   if (
     !isEntityArray(exercises) ||
@@ -58,5 +58,16 @@ export function validateBackupFile(input: unknown): BackupFile {
     )
   }
 
-  return input as BackupFile
+  // userProfile was added after formatVersion 1 shipped (D-042); backups
+  // exported before that simply don't have it, so a missing field means
+  // "no profile data" rather than a validation error.
+  if (userProfile !== undefined && !isEntityArray(userProfile)) {
+    throw new BackupValidationError('Backup "data.userProfile", if present, must be an array with an "id" per entry.')
+  }
+
+  return {
+    formatVersion,
+    exportedAt,
+    data: { exercises, workouts, routines, bodyMeasurements, userProfile: isEntityArray(userProfile) ? userProfile : [] },
+  } as unknown as BackupFile
 }

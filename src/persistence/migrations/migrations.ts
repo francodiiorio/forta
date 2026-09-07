@@ -14,6 +14,9 @@ const MIGRATIONS: Record<number, Migration> = {
     db.createObjectStore(STORE_NAMES.routines, { keyPath: 'id' })
     db.createObjectStore(STORE_NAMES.bodyMeasurements, { keyPath: 'id' })
   },
+  2: (db) => {
+    db.createObjectStore(STORE_NAMES.userProfile, { keyPath: 'id' })
+  },
 }
 
 /**

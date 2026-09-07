@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import type { Exercise } from '../../domain/exercise/exercise'
+import type { UserProfile } from '../../domain/profile/userProfile'
 import { closeDatabase } from '../indexedDb/openDatabase'
 import { DATABASE_NAME, STORE_NAMES } from '../indexedDb/schema'
 import { createRepository } from '../repositories/createRepository'
@@ -71,5 +72,29 @@ describe('exportBackup / importBackup', () => {
         data: { exercises: [], workouts: [], routines: [], bodyMeasurements: [] },
       }),
     ).rejects.toThrow(BackupValidationError)
+  })
+
+  it('round-trips userProfile', async () => {
+    const profiles = createRepository<UserProfile>(STORE_NAMES.userProfile)
+    await profiles.add({ id: 'profile', height: 178 })
+
+    const backup = await exportBackup()
+    expect(backup.data.userProfile).toEqual([{ id: 'profile', height: 178 }])
+
+    await importBackup(backup)
+    expect(await profiles.getAll()).toEqual([{ id: 'profile', height: 178 }])
+  })
+
+  it('imports a legacy backup that predates userProfile as if it had none', async () => {
+    const profiles = createRepository<UserProfile>(STORE_NAMES.userProfile)
+    await profiles.add({ id: 'profile', height: 178 })
+
+    await importBackup({
+      formatVersion: 1,
+      exportedAt: new Date().toISOString(),
+      data: { exercises: [], workouts: [], routines: [], bodyMeasurements: [] },
+    })
+
+    expect(await profiles.getAll()).toEqual([])
   })
 })

@@ -121,6 +121,15 @@ export function DownloadIcon({ className }: IconProps) {
   )
 }
 
+export function UserIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <circle cx="12" cy="8.5" r="3.5" />
+      <path d="M4.5 20a7.5 7.5 0 0 1 15 0" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 export function UploadIcon({ className }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">

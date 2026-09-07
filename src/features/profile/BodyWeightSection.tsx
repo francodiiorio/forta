@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { isoDateTimeToDateInput } from '../../utils/date'
 import { formatNumber } from '../../utils/format'
-import { useBodyMeasurements } from './useBodyMeasurements'
+import { useBodyMeasurements } from '../body/useBodyMeasurements'
 
 function todayDateOnly(): string {
   return new Date().toISOString().slice(0, 10)

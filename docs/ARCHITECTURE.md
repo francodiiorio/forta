@@ -110,6 +110,15 @@ same nav element repositions into a left sidebar via
 `@media (min-width: 900px)` instead of a separate desktop component
 (D-040), and `HomeSection` splits into a two-column grid at that width.
 
+A `Perfil` tab was then added as a sixth nav entry (D-042), holding a
+new `features/profile`: static personal data (currently just height,
+via a new `UserProfile` entity) and body-weight logging, the latter
+moved out of `features/settings`. `features/settings` now holds only
+data export/import. `features/body`'s `useBodyMeasurements` hook and
+`BodyWeightCard` stay put — the card is a Home widget, not a Perfil
+concern — but `BodyWeightSection` (the logging form) now lives under
+`features/profile`.
+
 State-sharing across `app/App.tsx`'s tabs follows one rule: lift a hook
 only when a consumer needs to survive a tab switch (a draft, or avoiding
 a refetch flicker on data the active tab is already showing) — otherwise
@@ -121,11 +130,10 @@ every mount is both simpler and avoids the staleness that lifting would
 cause (D-029). `Home` originally lifted `useWorkouts` by mistake when it
 was introduced and shipped with exactly that staleness bug; see D-036.
 
-`app/App.tsx` switches between its five sections via a plain `tab` state,
+`app/App.tsx` switches between its six sections via a plain `tab` state,
 not a router — see `docs/DECISIONS.md` D-021. `app/routes.tsx` still
 doesn't exist; a real router is added only when something needs an
 actual URL (deep links, browser back/forward), per D-007/D-017.
 
-`features/body` (body measurement logging — see `docs/PRODUCT.md`, never
-scheduled a stage) and `app/providers` (no cross-cutting React context
-has been needed yet) remain empty directory skeletons.
+`app/providers` (no cross-cutting React context has been needed yet)
+remains an empty directory skeleton.

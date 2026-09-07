@@ -24,7 +24,7 @@ export function BodyWeightCard() {
         <h4>
           <ScaleIcon className="icon-inline" /> Peso corporal
         </h4>
-        <p className="muted">Registrá tu peso desde Ajustes para ver la tendencia acá.</p>
+        <p className="muted">Registrá tu peso desde Perfil para ver la tendencia acá.</p>
       </section>
     )
   }

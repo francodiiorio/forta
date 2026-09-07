@@ -15,6 +15,7 @@ export async function exportBackup(): Promise<BackupFile> {
     workouts: await promisifyRequest(tx.objectStore(STORE_NAMES.workouts).getAll()),
     routines: await promisifyRequest(tx.objectStore(STORE_NAMES.routines).getAll()),
     bodyMeasurements: await promisifyRequest(tx.objectStore(STORE_NAMES.bodyMeasurements).getAll()),
+    userProfile: await promisifyRequest(tx.objectStore(STORE_NAMES.userProfile).getAll()),
   }
 
   return {
@@ -42,6 +43,7 @@ export async function importBackup(input: unknown): Promise<void> {
     [STORE_NAMES.workouts, backup.data.workouts],
     [STORE_NAMES.routines, backup.data.routines],
     [STORE_NAMES.bodyMeasurements, backup.data.bodyMeasurements],
+    [STORE_NAMES.userProfile, backup.data.userProfile],
   ]
 
   for (const [storeName, entities] of entriesByStore) {

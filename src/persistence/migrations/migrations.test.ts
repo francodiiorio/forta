@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { STORE_NAMES } from '../indexedDb/schema'
+import { DATABASE_VERSION, STORE_NAMES } from '../indexedDb/schema'
 import { runMigrations } from './migrations'
 
 describe('runMigrations', () => {
-  it('creates every v1 object store from a fresh database', async () => {
+  it('creates every object store from a fresh database', async () => {
     const db = await new Promise<IDBDatabase>((resolve, reject) => {
-      const request = indexedDB.open('migrations-test-fresh', 1)
+      const request = indexedDB.open('migrations-test-fresh', DATABASE_VERSION)
       request.onupgradeneeded = (event) => runMigrations(request.result, event.oldVersion)
       request.onsuccess = () => resolve(request.result)
       request.onerror = () => reject(request.error)
@@ -34,7 +34,7 @@ describe('runMigrations', () => {
       },
     } as unknown as IDBDatabase
 
-    expect(() => runMigrations(fakeDb, 0)).toThrow(/schema version 2/)
+    expect(() => runMigrations(fakeDb, 0)).toThrow(/schema version 3/)
     expect(fakeCreatedStores.sort()).toEqual(Object.values(STORE_NAMES).sort())
   })
 })

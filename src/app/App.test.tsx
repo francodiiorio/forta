@@ -113,10 +113,10 @@ describe('App', () => {
     expect(muscleCells[3]).toHaveTextContent('1') // sessions
   })
 
-  it('logs body weight from Ajustes and reflects it on the home dashboard', async () => {
+  it('logs body weight from Perfil and reflects it on the home dashboard', async () => {
     render(<App />)
 
-    fireEvent.click(screen.getByRole('button', { name: 'Ajustes' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Perfil' }))
     const weightSection = screen.getByRole('region', { name: 'Peso corporal' })
 
     await within(weightSection).findByText('Todavía no registraste tu peso.')
