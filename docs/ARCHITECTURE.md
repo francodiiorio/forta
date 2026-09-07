@@ -119,6 +119,14 @@ data export/import. `features/body`'s `useBodyMeasurements` hook and
 concern — but `BodyWeightSection` (the logging form) now lives under
 `features/profile`.
 
+`features/settings` also gained a manual light/dark/system theme
+toggle (D-049). It's the one deliberate exception to "persist through
+the repository layer only" (see Rules, above): a theme choice is a
+device/display preference, not a fact about the user's training, so
+`features/settings/useTheme.ts` reads and writes `localStorage`
+directly rather than going through `persistence/`, and it's never part
+of the backup format.
+
 State-sharing across `app/App.tsx`'s tabs follows one rule: lift a hook
 only when a consumer needs to survive a tab switch (a draft, or avoiding
 a refetch flicker on data the active tab is already showing) — otherwise

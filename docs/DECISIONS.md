@@ -706,3 +706,30 @@ it — the panel now reads as a distinct raised pane rather than a
 same-tone smudge. Light mode's glass was already lighter than its
 (light gray) background by construction, so it didn't have this
 problem and wasn't touched.
+
+## D-049 — Manual theme preference (system/light/dark) added to Ajustes
+
+Product request: a way to pick light or dark explicitly, instead of
+always following the OS. Added a "Sistema" / "Claro" / "Oscuro"
+segmented control (same pattern as `TrainSection`'s Registrar/Rutinas —
+D-035) to a new "Apariencia" card in Ajustes.
+
+This is a device/display preference, not fitness data — it doesn't
+describe anything about training, so it doesn't belong in `domain`,
+doesn't go through the repository layer, and is never part of the
+backup format (unlike `UserProfile`, D-042, which *is* persisted data
+about the user). It's kept in `localStorage` under
+`forta-theme-preference`, read/written directly by
+`features/settings/useTheme.ts` — the one deliberate exception to "no
+direct storage access outside persistence/".
+
+Every theme value in `src/index.css` switched from
+`@media (prefers-color-scheme: dark)` to a `:root[data-theme="dark"]`
+attribute selector — necessary because a media query can't be
+overridden by a manual choice, only reflect the OS. `data-theme` is
+always resolved to a concrete `light`/`dark` (never left as an
+ambiguous "system" value in the DOM): a blocking inline script in
+`index.html` sets it before first paint to avoid a flash of the wrong
+theme, and `useTheme` keeps it in sync afterward, including a
+`matchMedia` listener that live-updates it when the preference is
+"Sistema" and the OS theme changes while the app is open.
