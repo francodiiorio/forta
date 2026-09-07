@@ -733,3 +733,34 @@ ambiguous "system" value in the DOM): a blocking inline script in
 theme, and `useTheme` keeps it in sync afterward, including a
 `matchMedia` listener that live-updates it when the preference is
 "Sistema" and the OS theme changes while the app is open.
+
+## D-050 — Modal glass: much lower opacity, `prefers-reduced-transparency` fallback
+
+More product feedback on D-048's modal glass, this time isolating an
+actual browser difference: in Safari the blur (`backdrop-filter`)
+rendered correctly, but the panel looked too solid; in another
+(unspecified) browser, no blur showed at all — background-color alpha
+blending still worked, so it looked see-through but perfectly sharp,
+not "less glassy."
+
+That second symptom is the specific, documented behavior of
+`backdrop-filter` being disabled while a translucent `background-color`
+still renders normally — not a bug in this app's CSS, but either a
+browser without real support or (on WebKit) the user having "Reduce
+Transparency" on in system Accessibility settings, which turns off
+`backdrop-filter` blur specifically. Added a
+`@media (prefers-reduced-transparency: reduce)` rule and an
+`@supports not (backdrop-filter: ...)` rule, both falling back to a
+fully solid `var(--surface)` panel — the correct behavior in either
+case is "not translucent at all," never "translucent but not blurred,"
+which reads as broken rather than as a deliberate design choice.
+
+Once blur was confirmed genuinely working (in Safari), the real ask
+was to lower `--glass-bg`'s opacity substantially — from ~50-55% to
+28% in both themes — since with real blur behind it, a much more
+see-through panel still reads clearly as glass rather than as empty
+space, which a low-opacity panel risks looking like *without* blur
+(exactly the failure mode above). This is why the opacity wasn't
+lowered earlier, in D-048: doing so before confirming blur actually
+renders would have made the no-blur browser's version look worse, not
+more "glassy."
