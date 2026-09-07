@@ -43,10 +43,11 @@ Workout history list and session detail view. Added simple in-app tabs
 sections. Also closed a Stage 1/3 gap found while building this: `Set`
 had no field for `TIME`-tracked exercises (D-022).
 
-## Stage 6 — Analytics
+## Stage 6 — Analytics (done)
 
-Daily, weekly, monthly stats; exercise stats; muscle stats; frequency;
-volume; PRs — per [ANALYTICS.md](ANALYTICS.md).
+Daily, weekly, monthly stats; muscle stats; frequency; volume; PRs; est.
+1RM — per [ANALYTICS.md](ANALYTICS.md). Pure TypeScript, no UI yet (see
+D-027) — Stage 7 builds the screen that surfaces these numbers.
 
 ## Stage 7 — Progress
 

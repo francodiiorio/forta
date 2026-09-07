@@ -233,3 +233,73 @@ reps input for it, silently. Added `durationSeconds` to `Set` and
 symmetric with `requiresWeight`/`requiresReps`. This was a gap from Stage
 1/3, not a Stage 5 decision, but it's fixed here rather than left
 known-broken now that it's been found — see `docs/QA.md`.
+
+## D-023 — Volume is `WEIGHT_REPS`-only
+
+`calculateSetVolume` returns 0 for anything but a `WEIGHT_REPS` working
+set. `BODYWEIGHT_REPS`/`REPS_ONLY`/`TIME` have no weight value at all.
+`ASSISTED_BODYWEIGHT` does have a `weight`, but it represents assistance
+— less assistance means *more* effective load, the opposite of a normal
+weight value — so multiplying it directly into "volume" would make
+harder sets look like they did less work. Rather than build a
+bodyweight-estimation model (which would need body-weight data matched
+to a date, with its own ambiguity about which measurement to use), Stage
+6 leaves these tracking types out of "volume" specifically. Direct/
+indirect set counts (which don't need a weight value) still cover them.
+
+## D-024 — Estimated 1RM formula: Epley
+
+`weight × (1 + reps / 30)`. Chosen over Brzycki, Lombardi, etc. for being
+the most commonly cited and simplest to state — there's no formula that's
+correct in any rigorous sense (all are curve-fit heuristics that degrade
+at higher rep counts), so the choice is about being a defensible,
+well-known default, not "the right one." `WEIGHT_REPS` only.
+
+## D-025 — PR definition varies by tracking type; `ASSISTED_BODYWEIGHT` has none
+
+`WEIGHT_REPS`: heaviest completed working-set weight, and — tracked
+separately, since the heaviest single isn't always the best-estimated
+1RM — the best estimated 1RM. `BODYWEIGHT_REPS`/`REPS_ONLY`: most reps in
+a completed working set. `TIME`: longest completed working-set duration.
+`ASSISTED_BODYWEIGHT` has no PR computed: "best" would mean *least*
+assistance, which a simple `max()` over the stored value gets backwards,
+and there's no bodyweight data to normalize against to make the
+comparison meaningful. Only `completed` sets count for any PR — an
+aborted set isn't a record.
+
+## D-026 — Date ranges compare date substrings, not `Date` objects; weeks are ISO (Monday–Sunday)
+
+`DateRange` is `{ start, end }` as inclusive `"YYYY-MM-DD"` strings, and
+membership is a plain string comparison against `workout.startedAt`'s
+first 10 characters — not `Date` object arithmetic. This sidesteps
+timezone-conversion bugs entirely rather than being careful around them.
+Weekly ranges follow ISO 8601 (Monday start) since it's an unambiguous,
+documented standard, avoiding the classic undocumented Sunday-vs-Monday
+inconsistency. This decision only holds if the dates being compared were
+stored consistently in the first place — see D-028.
+
+## D-027 — Analytics has no UI in Stage 6
+
+`src/analytics/` is pure, tested TypeScript with no consumer yet — same
+shape as Stage 1 (domain) and Stage 2 (persistence) before their
+features landed. Stage 7 ("Progress") builds the dashboard that surfaces
+these numbers; wiring analytics into a screen before then would be
+building UI ahead of the product decisions (layout, which numbers matter
+most) that belong to that stage.
+
+## D-028 — Fixed a timezone bug in `dateInputToISODateTime` (Stage 3)
+
+Found while trusting D-026's "compare date substrings" premise: it only
+holds if the stored date substring actually matches the date the user
+picked. `dateInputToISODateTime` parsed `"${date}T00:00:00"` with no
+timezone marker, which JS parses as the *runtime's local* midnight. For
+a positive UTC offset (e.g. UTC+5), local midnight for a given date is
+still the *previous* day in UTC — so the date the user picked could be
+silently stored, and later range-filtered, as one day earlier than what
+they entered. Fixed by anchoring to `"T00:00:00Z"` (explicit UTC), so
+the stored instant's first 10 characters always equal the picked date
+regardless of the runtime's timezone. This didn't surface in manual
+testing so far because the runtime timezone used has a negative UTC
+offset, where the bug doesn't trigger — a reminder that "worked when I
+tried it" doesn't cover timezones the tester isn't in. `utils/date.ts`
+had no dedicated test before this either; added one.

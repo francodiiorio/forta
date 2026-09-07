@@ -79,20 +79,23 @@ measurements. Derived numbers (volume, progress, PRs) are never persisted —
 they are computed on demand by analytics from source facts. See
 [DATA_MODEL.md](DATA_MODEL.md) for the rationale.
 
-## Current state (through Stage 5)
+## Current state (through Stage 6)
 
 `domain` (Stage 1), `persistence` (Stage 2), the workout-logging flow in
 `features/workout` and `features/exercises` (Stage 3), routines in
-`features/routines` (Stage 4), and history in `features/history`
-(Stage 5) have real code; see `docs/DATA_MODEL.md` and
-`docs/FITNESS_DOMAIN.md` for what's implemented. The exercise catalog
-(`ExercisesApi`, from `useExercises`) and the workout draft
+`features/routines` (Stage 4), history in `features/history` (Stage 5),
+and `analytics` (Stage 6: volume, muscle workload/frequency, PRs,
+estimated 1RM, period rollups) have real code; see `docs/DATA_MODEL.md`,
+`docs/FITNESS_DOMAIN.md`, and `docs/ANALYTICS.md` for what's implemented.
+`analytics` has no UI consumer yet — see D-027 — so it isn't reachable
+from `App.tsx`, though its code is built and fully tested. The exercise
+catalog (`ExercisesApi`, from `useExercises`) and the workout draft
 (`useWorkoutForm`) are both owned by `App.tsx` and passed down as props
 rather than each feature holding its own copy — see `docs/DECISIONS.md`
 D-018, D-021.
 
-`app/App.tsx` now switches between three sections (`workout` / `routines`
-/ `history`) via a plain `tab` state, not a router — see
+`app/App.tsx` switches between three sections (`workout` / `routines` /
+`history`) via a plain `tab` state, not a router — see
 `docs/DECISIONS.md` D-021. `app/routes.tsx` still doesn't exist; a real
 router is added only when something needs an actual URL (deep links,
 browser back/forward), per D-007/D-017.

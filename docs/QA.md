@@ -46,7 +46,7 @@ but is required for anything touching domain, analytics, persistence,
 migrations, import/export, or a core flow (see
 `.claude/agents/orchestrator.md`).
 
-## Coverage so far (through Stage 5)
+## Coverage so far (through Stage 6)
 
 Domain (Stage 1): tracking-type field rules, set-type classification,
 and the direct/indirect muscle involvement rule against the Bench Press
@@ -82,9 +82,23 @@ unloggable since Stage 1/3 without anyone noticing — see
 was added specifically because the original gap had no test that would
 have caught it.
 
-Not yet covered because the feature doesn't exist yet: analytics
-(Stage 6). Progress (Stage 7) and body measurements must not
-proceed without tests per the rules stated above.
+Analytics (Stage 6): every formula has direct unit tests, including
+edge cases the spec explicitly cares about — warm-up sets excluded,
+non-`WEIGHT_REPS` tracking types contributing zero volume,
+`ASSISTED_BODYWEIGHT` producing no PR, a muscle that's both direct and
+indirect in the same session counting only as direct, and ISO week
+ranges crossing a month boundary. This stage also caught two real bugs
+that weren't Stage 6 bugs: `Set` had no `durationSeconds` field for
+`TIME`-tracked exercises (already fixed in Stage 5, D-022), and
+`dateInputToISODateTime` (Stage 3) parsed a picked date in the runtime's
+local timezone instead of UTC, which can silently shift the stored date
+by a day depending on the runtime's UTC offset — found while relying on
+date-substring comparisons for period stats. `utils/date.ts` had no
+dedicated test before this; it does now (D-028).
+
+Not yet covered because the feature doesn't exist yet: progress
+(Stage 7) and body measurements must not proceed without tests per the
+rules stated above.
 
 ## Commands
 

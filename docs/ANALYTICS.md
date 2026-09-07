@@ -4,9 +4,10 @@ Analytics computes derived numbers from persisted facts (see
 [DATA_MODEL.md](DATA_MODEL.md)). It is pure TypeScript with no React and no
 direct IndexedDB access — it receives domain data and returns numbers.
 Authority: **Analytics Engineer**, constrained by definitions in
-[FITNESS_DOMAIN.md](FITNESS_DOMAIN.md). Nothing described here is
-implemented yet; this fixes what each metric will mean before it is built
-(Stage 6).
+[FITNESS_DOMAIN.md](FITNESS_DOMAIN.md). Workload, frequency, and
+performance (`src/analytics/`) are implemented as of Stage 6 — see
+"Implemented formulas" below for the exact conventions chosen. Progression
+(Stage 7) is not implemented yet.
 
 ## Four distinct concepts
 
@@ -66,6 +67,38 @@ workload so the user isn't shown a misleading single number.
 
 **Period rollups** (composed from the categories above, not a fifth
 category): daily, weekly, monthly, and custom-range stats.
+
+## Implemented formulas (Stage 6)
+
+- **Volume** (`analytics/volume/calculateVolume.ts`) is `weight × reps`,
+  computed only for `WEIGHT_REPS` working sets. `BODYWEIGHT_REPS` /
+  `REPS_ONLY` / `TIME` have no weight to multiply. `ASSISTED_BODYWEIGHT`'s
+  recorded weight is assistance — less assistance is *harder* — so
+  multiplying it directly would invert what "more volume" means; it's
+  excluded rather than computed wrong. See D-023.
+- **Direct sets / indirect involvement per muscle**
+  (`analytics/muscles/muscleWorkload.ts`) reuses
+  `domain/muscle/muscleInvolvement.classifySetInvolvement` and counts
+  sets — direct and indirect always kept as separate numbers, never
+  merged or weighted.
+- **Training frequency** (`analytics/frequency/trainingFrequency.ts`) is
+  a session count. **Per-muscle frequency** counts sessions, not sets: a
+  muscle direct-set five times in one session is one `directSessions`.
+  A session where a muscle got indirect involvement but no direct set
+  counts under `indirectOnlySessions`; if it got both, it only counts as
+  direct.
+- **Estimated 1RM** (`analytics/records/estimatedOneRepMax.ts`) uses the
+  Epley formula, `weight × (1 + reps / 30)`, `WEIGHT_REPS` only. See
+  D-024 for why Epley over alternatives.
+- **Personal records** (`analytics/records/personalRecords.ts`): heaviest
+  completed working-set weight for `WEIGHT_REPS` (plus the best estimated
+  1RM, tracked separately since they aren't always the same set); most
+  reps for `BODYWEIGHT_REPS`/`REPS_ONLY`; longest duration for `TIME`.
+  Not computed for `ASSISTED_BODYWEIGHT` — see D-025.
+- **Period rollups** (`analytics/stats.ts`, `analytics/dateRange.ts`):
+  daily/weekly/monthly/custom ranges are inclusive `"YYYY-MM-DD"` bounds,
+  compared as date substrings of `startedAt` (not timezone-aware `Date`
+  arithmetic). Weekly is the ISO 8601 week (Monday–Sunday). See D-026.
 
 ## Rules
 
