@@ -1,0 +1,108 @@
+# Decisions
+
+Durable architectural and product decisions, in order. Superseding a
+decision should add a new entry that references the old one, not edit
+history away.
+
+## D-001 — Local-first, no backend
+
+Forta has no backend, no accounts, no network dependency for core
+functionality. IndexedDB is the source of truth. Rationale: the product
+spec requires this explicitly, and a single-user gym log has no inherent
+need for a server. Sync/backend is a possible future stage, not assumed
+by any current code.
+
+## D-002 — Persist facts, not derived statistics; two independent version numbers
+
+Only source facts (`workouts`, `exercises`, `sets`, `routines`,
+`bodyMeasurements`) are persisted. Derived numbers (volume, progress, PRs)
+are always recomputed from facts, never stored. See
+[DATA_MODEL.md](DATA_MODEL.md).
+
+IndexedDB's `schemaVersion` (how data is shaped on disk) and the
+import/export format's version (how a backup file is shaped) are tracked
+independently. A schema migration doesn't necessarily require a backup
+format change and vice versa, so conflating them into one number would
+force unrelated changes to bump together.
+
+## D-003 — Direct vs. indirect muscle involvement are separate, unweighted concepts
+
+A working set is a direct set for an exercise's primary muscles and
+indirect involvement for its secondary muscles. Forta does not assign
+indirect involvement a fractional weight (e.g. "50% of a set") because no
+general, defensible per-exercise percentage exists. See
+[FITNESS_DOMAIN.md](FITNESS_DOMAIN.md). If a future analytics feature wants
+a single weighted score, it must be a new, explicitly-named, separately
+documented metric — it cannot silently redefine "sets per muscle."
+
+## D-004 — Workload, frequency, performance, and progression are kept distinct
+
+Analytics must not present a raw period-over-period workload delta (e.g.
+volume up 50%) as "progress," because it conflates workload with
+frequency. See [ANALYTICS.md](ANALYTICS.md). This is a standing constraint
+on every future analytics feature, not a one-time note.
+
+## D-005 — Multi-agent orchestration with a coordinating orchestrator
+
+Work on this codebase is organized through `.claude/agents/`: an
+`orchestrator` that classifies each request and selects only the relevant
+specialist agents (not all of them, every time), plus domain-authoritative
+agents (`fitness-domain`, `data-architect`, `analytics-engineer`,
+`product-designer`, `frontend-engineer`, `qa-engineer`) and an
+`internal-critic` that reviews independently rather than validating the
+implementer's own reasoning. Rationale: keeps fitness/analytics/persistence
+rules from being reinvented ad hoc inside UI code.
+
+## D-006 — Toolchain: Vite 8 / React 19 / Node 24, pinned via `.nvmrc`
+
+Stage 0 was scaffolded with the current `create-vite` React+TypeScript
+template (Vite 8, React 19, `oxlint` for linting). Vite 8's bundler
+(Rolldown) ships platform-specific native bindings that require Node
+`^20.19.0 || >=22.12.0`; the environment's active Node (22.11.0, via nvm)
+was just below that floor, which surfaced as an unrelated-looking
+"cannot find native binding" error from `vitest`/`vite`, not a code
+problem. Rather than downgrade the whole toolchain to dodge a one-minor-
+version gap, Node 24.20.0 (latest LTS at setup time) was installed
+alongside the existing version via `nvm` and pinned for this project via
+`.nvmrc`, without changing the user's global default Node version. Anyone
+opening this project should `nvm use` (or let an nvm-integrated shell do
+it automatically) before running `npm install`.
+
+## D-007 — No routing library, and no `routes.tsx`, yet
+
+No router package is installed, `App.tsx` renders a static shell, and
+`src/app/routes.tsx` is not created. An earlier draft of Stage 0 added it
+with a hardcoded path-per-feature map; that was reverted (see
+`docs/QA.md` / internal-critic Stage 0 review) because it committed to a
+URL scheme before any feature had navigation, and — unlike every other
+not-yet-built layer in this codebase, which is an empty directory — it was
+the one place with invented content standing in for a decision nobody had
+made yet. Both the router and `routes.tsx` are added together when a stage
+actually needs navigation between features (Stage 3+), as a
+`product-designer`/`frontend-engineer` decision at that time.
+
+## D-008 — Domain vocabulary as string-literal unions, not TS enums
+
+`TrackingType`, `Laterality`, `Equipment`, `ExerciseCategory`, `SetType`,
+and `Muscle` are each a `const [...] as const` array plus a derived
+`typeof arr[number]` type, not a TypeScript `enum`. Two reasons: (1)
+`tsconfig.app.json` sets `erasableSyntaxOnly`, which rejects real
+(non-erasable) enums outright; (2) the array is usable at runtime (e.g. to
+populate a `<select>` later) for free, without a separate values list to
+keep in sync.
+
+## D-009 — Equipment includes an `OTHER` fallback; category stays binary
+
+`Equipment` is a closed list for the common cases but keeps `OTHER` as an
+escape hatch, since gym equipment can't be fully enumerated before real
+exercise data exists. `ExerciseCategory` is only `COMPOUND` / `ISOLATION`
+for now — the simplest distinction that's actually used anywhere in this
+stage; a finer movement-pattern taxonomy (push/pull/legs, etc.) is added
+only when a feature needs it.
+
+## D-010 — `RoutineExercise` stays minimal in Stage 1
+
+`RoutineExercise` is `{ id, exerciseId }` only. Target sets/reps/weight
+for a routine are a product decision (does a routine prescribe a target,
+or just a list of exercises?) that belongs to Stage 4, not something to
+guess while only defining domain types.
