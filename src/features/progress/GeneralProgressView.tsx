@@ -1,8 +1,10 @@
+import { BarChart } from '../../components/BarChart'
 import { getLastNWeekRanges } from '../../analytics/dateRange'
 import { getGeneralProgressOverview } from '../../analytics/progress/generalProgress'
 import type { Exercise } from '../../domain/exercise/exercise'
 import type { Workout } from '../../domain/workout/workout'
 import type { Id } from '../../types/common'
+import { formatNumber } from '../../utils/format'
 
 const WEEKS_SHOWN = 8
 
@@ -20,35 +22,47 @@ interface GeneralProgressViewProps {
  * Deliberately not a single "+X% progress" figure — see
  * docs/DECISIONS.md D-004: two weeks can have the same volume for very
  * different reasons (more sessions vs. harder sessions), and this view
- * exists so that difference stays visible instead of getting averaged away.
+ * exists so that difference stays visible instead of getting averaged
+ * away. The two charts below are kept separate for the same reason —
+ * never overlaid into one axis that implies they should be compared
+ * directly.
  */
 export function GeneralProgressView({ workouts, exerciseById }: GeneralProgressViewProps) {
   const ranges = getLastNWeekRanges(todayDateOnly(), WEEKS_SHOWN)
   const overview = getGeneralProgressOverview(workouts, exerciseById, ranges)
 
   return (
-    <section aria-label="Progreso general">
+    <section className="exercise-card" aria-label="Progreso general">
       <h3>Progreso general (últimas {WEEKS_SHOWN} semanas)</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Semana</th>
-            <th>Sesiones</th>
-            <th>Volumen total (kg)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {overview.map((point) => (
-            <tr key={point.range.start}>
-              <td>
-                {point.range.start} – {point.range.end}
-              </td>
-              <td>{point.sessionCount}</td>
-              <td>{point.totalVolume}</td>
+
+      <p className="muted">Sesiones por semana</p>
+      <BarChart data={overview.map((point) => ({ label: point.range.start, value: point.sessionCount }))} />
+
+      <p className="muted">Volumen total por semana (kg)</p>
+      <BarChart data={overview.map((point) => ({ label: point.range.start, value: point.totalVolume }))} />
+
+      <div className="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Semana</th>
+              <th>Sesiones</th>
+              <th>Volumen total (kg)</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {overview.map((point) => (
+              <tr key={point.range.start}>
+                <td>
+                  {point.range.start} – {point.range.end}
+                </td>
+                <td>{point.sessionCount}</td>
+                <td>{formatNumber(point.totalVolume)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </section>
   )
 }

@@ -49,28 +49,32 @@ export function RoutineForm({ exercisesApi, onCreate }: RoutineFormProps) {
   }
 
   return (
-    <div aria-label="Nueva rutina">
-      <label>
+    <div className="exercise-card" aria-label="Nueva rutina">
+      <label className="field">
         Nombre de la rutina
         <input value={name} onChange={(event) => setName(event.target.value)} />
       </label>
 
-      <ul>
-        {entries.map(({ exercise, routineExercise }) => (
-          <li key={routineExercise.id}>
-            {exercise.name}
-            <button type="button" onClick={() => removeExercise(routineExercise.id)}>
-              Quitar
-            </button>
-          </li>
-        ))}
-      </ul>
+      {entries.length > 0 && (
+        <ul>
+          {entries.map(({ exercise, routineExercise }) => (
+            <li key={routineExercise.id}>
+              {exercise.name}{' '}
+              <button type="button" onClick={() => removeExercise(routineExercise.id)}>
+                Quitar
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <ExercisePicker exercisesApi={exercisesApi} onPick={addExercise} />
 
-      <button type="button" disabled={!canSubmit} onClick={handleCreate}>
-        Guardar rutina
-      </button>
+      <div className="button-group">
+        <button type="button" className="button-primary" disabled={!canSubmit} onClick={handleCreate}>
+          Guardar rutina
+        </button>
+      </div>
     </div>
   )
 }

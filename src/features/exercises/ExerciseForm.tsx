@@ -32,13 +32,13 @@ export function ExerciseForm({ onCreate, onCancel }: ExerciseFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} aria-label="Nuevo ejercicio">
-      <label>
+    <form className="exercise-card" onSubmit={handleSubmit} aria-label="Nuevo ejercicio">
+      <label className="field">
         Nombre
         <input value={name} onChange={(event) => setName(event.target.value)} />
       </label>
 
-      <label>
+      <label className="field">
         Músculos primarios
         <select
           multiple
@@ -53,7 +53,7 @@ export function ExerciseForm({ onCreate, onCancel }: ExerciseFormProps) {
         </select>
       </label>
 
-      <label>
+      <label className="field">
         Músculos secundarios
         <select
           multiple
@@ -68,7 +68,7 @@ export function ExerciseForm({ onCreate, onCancel }: ExerciseFormProps) {
         </select>
       </label>
 
-      <label>
+      <label className="field">
         Equipamiento
         <select value={equipment} onChange={(event) => setEquipment(event.target.value as Exercise['equipment'])}>
           {EQUIPMENT.map((value) => (
@@ -79,7 +79,7 @@ export function ExerciseForm({ onCreate, onCancel }: ExerciseFormProps) {
         </select>
       </label>
 
-      <label>
+      <label className="field">
         Tipo de registro
         <select
           value={trackingType}
@@ -93,7 +93,7 @@ export function ExerciseForm({ onCreate, onCancel }: ExerciseFormProps) {
         </select>
       </label>
 
-      <label>
+      <label className="field">
         Lateralidad
         <select value={laterality} onChange={(event) => setLaterality(event.target.value as Exercise['laterality'])}>
           {LATERALITIES.map((value) => (
@@ -104,7 +104,7 @@ export function ExerciseForm({ onCreate, onCancel }: ExerciseFormProps) {
         </select>
       </label>
 
-      <label>
+      <label className="field">
         Categoría
         <select value={category} onChange={(event) => setCategory(event.target.value as Exercise['category'])}>
           {EXERCISE_CATEGORIES.map((value) => (
@@ -115,12 +115,14 @@ export function ExerciseForm({ onCreate, onCancel }: ExerciseFormProps) {
         </select>
       </label>
 
-      <button type="submit" disabled={!canSubmit}>
-        Crear ejercicio
-      </button>
-      <button type="button" onClick={onCancel}>
-        Cancelar
-      </button>
+      <div className="button-group">
+        <button type="submit" className="button-primary" disabled={!canSubmit}>
+          Crear ejercicio
+        </button>
+        <button type="button" onClick={onCancel}>
+          Cancelar
+        </button>
+      </div>
     </form>
   )
 }

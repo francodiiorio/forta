@@ -337,3 +337,52 @@ to read as a trend on its own. General and muscle progress *are*
 workload-based, which is exactly why they always render session count
 next to volume/sets rather than either number alone — the reader needs
 both to tell "trained harder" apart from "trained more often."
+
+## D-031 — Design system: CSS custom properties, no CSS framework
+
+Stage 8 added a real visual design (`src/index.css`): color tokens as CSS
+custom properties, a light palette on `:root` with a dark override under
+`@media (prefers-color-scheme: dark)`, a small spacing scale, and a
+handful of reusable classes (`.card`, `.field`, `.button-group`,
+`.table-wrapper`, `.exercise-card`, `.set-row`, `.tab-bar`/`.tab-button`).
+No CSS framework or component library was added — the stack list
+doesn't call for one, and the app's surface area (a handful of forms,
+tables, and a few sections) doesn't need one either.
+
+## D-032 — Charts are hand-rolled inline SVG, not a charting library
+
+`src/components/BarChart.tsx` and `LineChart.tsx` are small, dependency-
+free SVG components used by the progress views. They are decorative
+(`aria-hidden="true"`): the accessible source of the same numbers is
+always the table or list rendered alongside them, which is also what the
+existing tests assert against. A charting library was deliberately not
+added — the three chart shapes Stage 8 needed (grouped bars, a single
+line) don't justify a new dependency, and keeping charts decorative
+sidesteps having to give hand-rolled SVG proper keyboard/screen-reader
+interaction semantics.
+
+## D-033 — Fixed a CSS specificity bug: the active tab's label vanished on hover
+
+Found while manually testing Stage 8's styling: hovering the *active* tab
+made its label invisible. Cause: the generic `button:hover:not(:disabled)`
+rule (specificity: 1 class + 2 pseudo-classes) has higher specificity than
+both `.tab-button:hover` and `.tab-button[aria-current='true']` (each 1
+class + 1 pseudo-class/attribute), so it won over the active tab's
+intended text color — which happened to equal the tab's own background
+color, making the text disappear entirely rather than just looking
+slightly off. Fixed by excluding `.tab-button` from the generic hover
+rule (`:not(.tab-button)`) and adding an explicit
+`.tab-button[aria-current='true']:hover` rule as a second line of
+defense. A reminder that CSS specificity conflicts can produce total
+invisibility, not just a minor color mismatch, and are easy to miss
+without actually hovering the element being tested.
+
+## D-034 — Display numbers are rounded separately from the value analytics returns
+
+`src/utils/format.ts`'s `formatNumber` rounds to one decimal place (and
+drops a trailing `.0`) for on-screen display only — e.g. estimated 1RM
+(`80 × (1 + 8/30)`) is `101.3` on screen, not
+`101.33333333333333`. Analytics functions themselves keep returning
+full-precision numbers; rounding happens once, at the UI boundary, so a
+future consumer that needs more precision (e.g. comparing two estimates)
+isn't silently working with an already-rounded value.

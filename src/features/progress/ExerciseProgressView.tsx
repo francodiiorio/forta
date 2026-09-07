@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { LineChart } from '../../components/LineChart'
 import { getExerciseProgressSeries } from '../../analytics/progress/exerciseProgress'
 import type { Exercise } from '../../domain/exercise/exercise'
 import type { Workout } from '../../domain/workout/workout'
 import { isoDateTimeToDateInput } from '../../utils/date'
+import { formatNumber } from '../../utils/format'
 
 interface ExerciseProgressViewProps {
   exercises: Exercise[]
@@ -27,10 +29,10 @@ export function ExerciseProgressView({ exercises, workouts }: ExerciseProgressVi
   const series = exercise ? getExerciseProgressSeries(exercise, workouts) : []
 
   return (
-    <section aria-label="Progreso por ejercicio">
+    <section className="exercise-card" aria-label="Progreso por ejercicio">
       <h3>Progreso por ejercicio</h3>
 
-      <label>
+      <label className="field">
         Ejercicio
         <select value={exerciseId} onChange={(event) => setExerciseId(event.target.value)}>
           <option value="">Elegir ejercicio…</option>
@@ -43,21 +45,24 @@ export function ExerciseProgressView({ exercises, workouts }: ExerciseProgressVi
       </label>
 
       {exercise && exercise.trackingType === 'ASSISTED_BODYWEIGHT' && (
-        <p>No se calcula progreso para ejercicios asistidos (ver D-025).</p>
+        <p className="muted">No se calcula progreso para ejercicios asistidos (ver D-025).</p>
       )}
 
       {exercise && series.length === 0 && exercise.trackingType !== 'ASSISTED_BODYWEIGHT' && (
-        <p>Todavía no hay series completadas registradas para este ejercicio.</p>
+        <p className="muted">Todavía no hay series completadas registradas para este ejercicio.</p>
       )}
 
       {series.length > 0 && (
-        <ul>
-          {series.map((point) => (
-            <li key={point.workoutId}>
-              {isoDateTimeToDateInput(point.date)}: {point.value} {METRIC_LABELS[point.metric]}
-            </li>
-          ))}
-        </ul>
+        <>
+          <LineChart values={series.map((point) => point.value)} />
+          <ul>
+            {series.map((point) => (
+              <li key={point.workoutId}>
+                {isoDateTimeToDateInput(point.date)}: {formatNumber(point.value)} {METRIC_LABELS[point.metric]}
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </section>
   )

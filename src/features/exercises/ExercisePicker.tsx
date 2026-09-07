@@ -32,8 +32,8 @@ export function ExercisePicker({ exercisesApi, onPick }: ExercisePickerProps) {
 
   if (exercises.length === 0) {
     return (
-      <div>
-        <p>No hay ejercicios todavía.</p>
+      <div className="button-group">
+        <p className="muted">No hay ejercicios todavía.</p>
         <button type="button" onClick={() => setCreating(true)}>
           Crear ejercicio
         </button>
@@ -42,7 +42,7 @@ export function ExercisePicker({ exercisesApi, onPick }: ExercisePickerProps) {
   }
 
   return (
-    <div>
+    <div className="button-group">
       <select
         aria-label="Elegir ejercicio"
         defaultValue=""

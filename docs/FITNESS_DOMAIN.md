@@ -90,17 +90,20 @@ to keep in sync by hand.
 
 ## Personal Records (PR) and estimated 1RM
 
-A **PR** for an exercise is the best observed working-set result — e.g.
-heaviest weight, most reps at a given weight, or best estimated 1RM,
-depending on the metric being tracked. Exact PR metrics are finalized when
-analytics is built (Stage 6); this document fixes that PRs are computed
-from working sets only, never from warm-ups.
+A **PR** for an exercise is the best observed completed working-set
+result — heaviest weight for `WEIGHT_REPS`, most reps for
+`BODYWEIGHT_REPS`/`REPS_ONLY`, longest duration for `TIME`; none for
+`ASSISTED_BODYWEIGHT` (see `docs/DECISIONS.md` D-025 for why). This
+document fixes that PRs are computed from working sets only, never from
+warm-ups; the exact per-tracking-type metric is D-025's call, not
+repeated here to avoid the two drifting apart.
 
-**Estimated 1RM** is a formula-based estimate from a weight+reps set (e.g.
-Epley/Brzycki-style formulas), applicable only to `WEIGHT_REPS` exercises.
-It is an estimate, not a measured value, and must be presented as such. The
-specific formula is chosen and documented in
-[ANALYTICS.md](ANALYTICS.md) when implemented, not decided here.
+**Estimated 1RM** is a formula-based estimate from a weight+reps set,
+applicable only to `WEIGHT_REPS` exercises. It is an estimate, not a
+measured value, and must be presented as such. Forta uses the Epley
+formula (`docs/ANALYTICS.md`, `docs/DECISIONS.md` D-024) — chosen for
+being simple and commonly cited, not because it's uniquely "correct";
+every such formula is a heuristic that degrades at higher rep counts.
 
 ## Progressive overload
 
@@ -113,10 +116,15 @@ deltas (e.g. total volume) are not read as progress on their own.
 
 ## Bodyweight and assisted exercises
 
-For `BODYWEIGHT_REPS`, volume calculations that require a weight value are
-out of scope until Stage 1 decides whether/how bodyweight is factored in —
-this is deliberately left open rather than guessed now. For
-`ASSISTED_BODYWEIGHT`, the recorded `weight` represents assistance (which
-reduces effective load), not added load; domain code must not treat it as
-interchangeable with `WEIGHT_REPS` weight without accounting for that
-sign difference.
+For `BODYWEIGHT_REPS`, volume (Stage 6, `docs/ANALYTICS.md` D-023) does
+not attempt to factor in bodyweight — there's no reliable body-weight
+value to attach to a given session, and guessing one (nearest
+`BodyMeasurement`, an assumed constant, etc.) would be exactly the kind
+of invented formula this project avoids. `BODYWEIGHT_REPS` sets
+contribute to direct/indirect set counts and frequency, just not to the
+weight-based volume number. For `ASSISTED_BODYWEIGHT`, the recorded
+`weight` represents assistance (which reduces effective load), not added
+load; domain and analytics code must not treat it as interchangeable
+with `WEIGHT_REPS` weight without accounting for that sign difference —
+which is also why it has no volume, no PR, and no estimated 1RM (see
+`docs/DECISIONS.md` D-023, D-025).

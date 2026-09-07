@@ -13,22 +13,21 @@ export function RoutineList({ routines, exercisesApi, onStart }: RoutineListProp
   const exerciseById = new Map(exercisesApi.exercises.map((exercise) => [exercise.id, exercise]))
 
   if (routines.length === 0) {
-    return <p>No hay rutinas todavía.</p>
+    return <p className="muted">No hay rutinas todavía.</p>
   }
 
   return (
     <ul>
       {routines.map((routine) => (
         <li key={routine.id}>
-          <strong>{routine.name}</strong>
-          <span>
-            {' '}
+          <strong>{routine.name}</strong>{' '}
+          <span className="muted">
             (
             {routine.exercises
               .map((routineExercise) => exerciseById.get(routineExercise.exerciseId)?.name ?? '?')
               .join(', ')}
             )
-          </span>
+          </span>{' '}
           <button type="button" onClick={() => onStart(routine, exercisesApi.exercises)}>
             Usar esta rutina
           </button>

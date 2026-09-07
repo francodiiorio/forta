@@ -46,7 +46,7 @@ but is required for anything touching domain, analytics, persistence,
 migrations, import/export, or a core flow (see
 `.claude/agents/orchestrator.md`).
 
-## Coverage so far (through Stage 7)
+## Coverage so far (through Stage 8)
 
 Domain (Stage 1): tracking-type field rules, set-type classification,
 and the direct/indirect muscle involvement rule against the Bench Press
@@ -104,6 +104,18 @@ three progress views (general table, exercise series, muscle table) —
 not just that the analytics functions return the right numbers in
 isolation, but that the dashboard actually wires them up. Manually
 verified in a real browser, including the estimated-1RM arithmetic.
+
+Polish (Stage 8): a unit test for the display-number rounding helper
+(`formatNumber`, D-034). Styling and responsiveness were verified
+manually in a real browser — at default and a simulated narrow (390px)
+width, and in dark mode — rather than by automated test, since visual
+layout isn't something the existing test setup (jsdom, no real layout
+engine) can meaningfully assert on. That manual pass is also what caught
+D-033's CSS specificity bug (the active tab's label vanishing on hover)
+and a stale, factually-wrong paragraph in `docs/ARCHITECTURE.md` that
+still described `analytics` as an empty skeleton after Stage 6 had
+already filled it in — a reminder to re-read a doc's *current* claims
+when updating it, not just append to it.
 
 Not yet covered because the feature doesn't exist yet: body measurement
 logging (the domain entity exists since Stage 1, but no UI was scheduled

@@ -56,9 +56,14 @@ progression metrics defined in ANALYTICS.md (not raw workload deltas —
 see D-030). Added as a fourth tab; workouts are loaded per-feature, not
 lifted to App like the exercise catalog (D-029).
 
-## Stage 8 — Polish
+## Stage 8 — Polish (done)
 
 Responsive layout, UX refinement, accessibility, charts, visual polish.
+A real CSS design system (light/dark, spacing scale, reusable classes —
+D-031), hand-rolled inline SVG charts for the progress views (D-032, no
+new dependency), and display-number rounding (D-034). Fixed a real CSS
+specificity bug found while testing: hovering the active tab made its
+label invisible (D-033).
 
 ## Explicitly deferred beyond this roadmap
 

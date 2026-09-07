@@ -1,8 +1,8 @@
 # Data Model
 
 This describes the entities Forta persists, their relationships, and who
-owns each one. It is the target shape for Stage 1 (domain types) and Stage 2
-(persistence) — nothing here is implemented yet in Stage 0.
+owns each one. Domain types (Stage 1) and persistence (Stage 2) both
+implement this shape; see `src/domain/` and `src/persistence/`.
 
 Ownership: **Data Architect** owns storage shape, IDs, and schema version.
 **Fitness Domain** owns the meaning of each field. Neither may change the
@@ -83,9 +83,12 @@ One set within a `WorkoutExercise`.
 | `completed` | `boolean` | |
 
 `SetType` distinguishes **working**, **warm-up**, **dropset**, and
-**failure** sets (see [FITNESS_DOMAIN.md](FITNESS_DOMAIN.md)). Only the
-enum and field exist in Stage 1; behavior that treats set types differently
-in analytics is built when a stage actually needs it, not speculatively.
+**failure** sets (see [FITNESS_DOMAIN.md](FITNESS_DOMAIN.md)). As of
+Stage 6, analytics treats warm-up sets as excluded from every metric
+(`domain/workout/set.ts`'s `isWorkingSet`) while dropset/failure count
+the same as working sets — no metric currently needs to tell dropsets
+and failure sets apart from plain working sets, so that distinction
+isn't built speculatively.
 
 ### Routine
 
@@ -98,8 +101,9 @@ start a workout from.
 | `name` | `string` | |
 | `exercises` | `RoutineExercise[]` | template exercises, no performed values |
 
-Exact `RoutineExercise` shape is finalized in Stage 4 when routines are
-built; it will reference `Exercise` the same way `WorkoutExercise` does.
+`RoutineExercise` is `{ id, exerciseId }` — it references `Exercise` the
+same way `WorkoutExercise` does, but carries no target sets/reps. Kept
+deliberately minimal; see `docs/DECISIONS.md` D-010.
 
 ### BodyMeasurement
 

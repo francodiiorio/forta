@@ -23,24 +23,24 @@ export function ProgressSection({ exercisesApi }: ProgressSectionProps) {
 
   if (loading || exercisesApi.loading) {
     return (
-      <section aria-label="Progreso">
+      <section className="card" aria-label="Progreso">
         <h2>Progreso</h2>
-        <p>Cargando…</p>
+        <p className="muted">Cargando…</p>
       </section>
     )
   }
 
   if (workouts.length === 0) {
     return (
-      <section aria-label="Progreso">
+      <section className="card" aria-label="Progreso">
         <h2>Progreso</h2>
-        <p>Todavía no hay entrenamientos registrados.</p>
+        <p className="muted">Todavía no hay entrenamientos registrados.</p>
       </section>
     )
   }
 
   return (
-    <section aria-label="Progreso">
+    <section className="card" aria-label="Progreso">
       <h2>Progreso</h2>
       <GeneralProgressView workouts={workouts} exerciseById={exerciseById} />
       <ExerciseProgressView exercises={exercisesApi.exercises} workouts={workouts} />

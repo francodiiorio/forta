@@ -17,11 +17,11 @@ function toOptionalNumber(value: string): number | undefined {
 /** One set's fields. Which fields are shown depends on the exercise's trackingType — a domain rule, not a UI guess. */
 export function SetRow({ set, trackingType, index, onChange, onRemove }: SetRowProps) {
   return (
-    <div role="group" aria-label={`Serie ${index + 1}`}>
+    <div className="set-row" role="group" aria-label={`Serie ${index + 1}`}>
       <span>{index + 1}</span>
 
       {requiresWeight(trackingType) && (
-        <label>
+        <label className="field">
           Peso (kg)
           <input
             type="number"
@@ -32,7 +32,7 @@ export function SetRow({ set, trackingType, index, onChange, onRemove }: SetRowP
       )}
 
       {requiresReps(trackingType) && (
-        <label>
+        <label className="field">
           Reps
           <input
             type="number"
@@ -43,7 +43,7 @@ export function SetRow({ set, trackingType, index, onChange, onRemove }: SetRowP
       )}
 
       {requiresDuration(trackingType) && (
-        <label>
+        <label className="field">
           Duración (seg)
           <input
             type="number"
@@ -53,7 +53,7 @@ export function SetRow({ set, trackingType, index, onChange, onRemove }: SetRowP
         </label>
       )}
 
-      <label>
+      <label className="field">
         RIR
         <input
           type="number"
@@ -62,7 +62,7 @@ export function SetRow({ set, trackingType, index, onChange, onRemove }: SetRowP
         />
       </label>
 
-      <label>
+      <label className="field">
         RPE
         <input
           type="number"
@@ -71,7 +71,7 @@ export function SetRow({ set, trackingType, index, onChange, onRemove }: SetRowP
         />
       </label>
 
-      <label>
+      <label className="field">
         Tipo
         <select value={set.type} onChange={(event) => onChange({ type: event.target.value as WorkoutSet['type'] })}>
           {SET_TYPES.map((type) => (
@@ -82,7 +82,7 @@ export function SetRow({ set, trackingType, index, onChange, onRemove }: SetRowP
         </select>
       </label>
 
-      <label>
+      <label className="field field-inline">
         Completada
         <input
           type="checkbox"

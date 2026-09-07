@@ -79,7 +79,7 @@ measurements. Derived numbers (volume, progress, PRs) are never persisted —
 they are computed on demand by analytics from source facts. See
 [DATA_MODEL.md](DATA_MODEL.md) for the rationale.
 
-## Current state (through Stage 7)
+## Current state (through Stage 8 — all planned stages done)
 
 `domain` (Stage 1), `persistence` (Stage 2), the workout-logging flow in
 `features/workout` and `features/exercises` (Stage 3), routines in
@@ -88,6 +88,10 @@ they are computed on demand by analytics from source facts. See
 1RM, period rollups; Stage 7: progression) and `features/progress`
 (Stage 7) all have real code; see `docs/DATA_MODEL.md`,
 `docs/FITNESS_DOMAIN.md`, and `docs/ANALYTICS.md` for what's implemented.
+Stage 8 added the visual design system (`src/index.css`, D-031) and two
+dependency-free chart components (`src/components/BarChart.tsx`,
+`LineChart.tsx`, D-032) — `components/` now has real content, not just
+the placeholder it was through Stage 7.
 
 State-sharing across `app/App.tsx`'s tabs follows one rule: lift a hook
 only when a consumer needs to survive a tab switch (a draft, or avoiding
@@ -105,6 +109,6 @@ mount is both simpler and avoids the staleness that lifting would cause
 router is added only when something needs an actual URL (deep links,
 browser back/forward), per D-007/D-017.
 
-`analytics`, the remaining `features/*` folders (progress, body),
-`components`, `hooks`, and `app/providers` are still empty directory
-skeletons (see `ROADMAP.md`).
+`features/body` (body measurement logging — see `docs/PRODUCT.md`, never
+scheduled a stage) and `app/providers` (no cross-cutting React context
+has been needed yet) remain empty directory skeletons.

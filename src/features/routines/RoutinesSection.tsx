@@ -15,7 +15,7 @@ export function RoutinesSection({ exercisesApi, onStartRoutine }: RoutinesSectio
   const { routines, createRoutine } = useRoutines()
 
   return (
-    <section aria-label="Rutinas">
+    <section className="card" aria-label="Rutinas">
       <h2>Rutinas</h2>
       <RoutineList routines={routines} exercisesApi={exercisesApi} onStart={onStartRoutine} />
       <RoutineForm exercisesApi={exercisesApi} onCreate={createRoutine} />

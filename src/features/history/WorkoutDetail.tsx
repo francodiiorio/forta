@@ -17,14 +17,14 @@ export function WorkoutDetail({ workout, exercisesApi, onClose }: WorkoutDetailP
   const exerciseById = new Map(exercisesApi.exercises.map((exercise) => [exercise.id, exercise]))
 
   return (
-    <section aria-label="Detalle del entrenamiento">
+    <section className="exercise-card" aria-label="Detalle del entrenamiento">
       <h3>{isoDateTimeToDateInput(workout.startedAt)}</h3>
-      {workout.notes && <p>{workout.notes}</p>}
+      {workout.notes && <p className="muted">{workout.notes}</p>}
 
       {workout.exercises.map((workoutExercise) => {
         const exercise = exerciseById.get(workoutExercise.exerciseId)
         return (
-          <div key={workoutExercise.id}>
+          <div key={workoutExercise.id} className="detail-block">
             <h4>{exercise?.name ?? 'Ejercicio eliminado del catálogo'}</h4>
             <ul>
               {workoutExercise.sets.map((set, index) => (

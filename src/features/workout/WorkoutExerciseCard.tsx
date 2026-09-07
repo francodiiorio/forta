@@ -22,8 +22,8 @@ export function WorkoutExerciseCard({
   onRemoveExercise,
 }: WorkoutExerciseCardProps) {
   return (
-    <section aria-label={exercise.name}>
-      <header>
+    <section className="exercise-card" aria-label={exercise.name}>
+      <header className="exercise-card-header">
         <h3>{exercise.name}</h3>
         <button type="button" onClick={onRemoveExercise}>
           Quitar ejercicio

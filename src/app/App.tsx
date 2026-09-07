@@ -24,12 +24,18 @@ export function App() {
   const workoutForm = useWorkoutForm()
 
   return (
-    <main>
-      <h1>Forta</h1>
+    <main className="app">
+      <h1 className="app-title">Forta</h1>
 
-      <nav aria-label="Secciones">
+      <nav className="tab-bar" aria-label="Secciones">
         {TABS.map(({ key, label }) => (
-          <button key={key} type="button" aria-current={tab === key} onClick={() => setTab(key)}>
+          <button
+            key={key}
+            type="button"
+            className="tab-button"
+            aria-current={tab === key}
+            onClick={() => setTab(key)}
+          >
             {label}
           </button>
         ))}

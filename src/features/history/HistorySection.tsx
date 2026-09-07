@@ -25,12 +25,12 @@ export function HistorySection({ exercisesApi }: HistorySectionProps) {
   const selected = workouts.find((workout) => workout.id === selectedId) ?? null
 
   return (
-    <section aria-label="Historial">
+    <section className="card" aria-label="Historial">
       <h2>Historial</h2>
 
-      {loading && <p>Cargando historial…</p>}
+      {loading && <p className="muted">Cargando historial…</p>}
 
-      {!loading && workouts.length === 0 && <p>No hay entrenamientos todavía.</p>}
+      {!loading && workouts.length === 0 && <p className="muted">No hay entrenamientos todavía.</p>}
 
       {!loading && workouts.length > 0 && (
         <ul>
@@ -39,7 +39,7 @@ export function HistorySection({ exercisesApi }: HistorySectionProps) {
               {isoDateTimeToDateInput(workout.startedAt)} —{' '}
               {workout.exercises
                 .map((workoutExercise) => exerciseById.get(workoutExercise.exerciseId)?.name ?? '?')
-                .join(', ')}
+                .join(', ')}{' '}
               <button type="button" onClick={() => setSelectedId(workout.id)}>
                 Ver detalle
               </button>

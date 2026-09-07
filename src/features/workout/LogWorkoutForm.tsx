@@ -27,10 +27,10 @@ export function LogWorkoutForm({ form, exercisesApi }: LogWorkoutFormProps) {
   } = form
 
   return (
-    <section aria-label="Registrar entrenamiento">
+    <section className="card" aria-label="Registrar entrenamiento">
       <h2>Registrar entrenamiento</h2>
 
-      <label>
+      <label className="field">
         Fecha
         <input type="date" value={date} onChange={(event) => setDate(event.target.value)} />
       </label>
@@ -49,16 +49,20 @@ export function LogWorkoutForm({ form, exercisesApi }: LogWorkoutFormProps) {
 
       <ExercisePicker exercisesApi={exercisesApi} onPick={addExercise} />
 
-      <label>
+      <label className="field">
         Notas
         <textarea value={notes} onChange={(event) => setNotes(event.target.value)} />
       </label>
 
-      <button type="button" disabled={!canSave} onClick={() => save()}>
+      <button type="button" className="button-primary" disabled={!canSave} onClick={() => save()}>
         Guardar entrenamiento
       </button>
 
-      {lastSavedAt && <p role="status">Entrenamiento guardado.</p>}
+      {lastSavedAt && (
+        <p className="status-message" role="status">
+          Entrenamiento guardado.
+        </p>
+      )}
     </section>
   )
 }
