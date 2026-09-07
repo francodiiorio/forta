@@ -574,3 +574,33 @@ app's soft, rounded visual language — D-039 — better than a hard SVG
 rect did). `LineChart` keeps its SVG viewBox: a single stretched
 polyline reads as "a line," not as broken the way stretched text does,
 so it wasn't showing the same problem.
+
+## D-045 — `.inline-form` submit buttons align with their input, not their label; body-weight history moved into a modal
+
+Two small Perfil fixes from product feedback with a screenshot:
+
+`.inline-form .field { margin-bottom: var(--space-2); }` (added so
+fields wrap onto readable rows on narrow widths) was counted inside
+`align-items: flex-end`'s alignment box, since flexbox aligns by the
+margin edge — so the field (label + input) sat that much higher than
+its sibling submit button, which has no such margin. Both
+`ProfileInfoSection`'s and `BodyWeightSection`'s "Guardar" buttons
+looked visibly offset from the input to their left. Fixed by zeroing
+that margin; `.inline-form`'s own `gap` already provides row spacing
+when the form wraps, so nothing else needed to change.
+
+Body-weight history: showing every logged entry inline by default was
+"mucha información visual innecesaria" (explicit feedback) — the card
+only needs to answer "what's my current weight" at a glance, not
+double as a full log. `BodyWeightSection` now shows just the latest
+value and its date, behind a "Ver historial completo" button that opens
+the full table in a new dependency-free `components/Modal.tsx` (D-032
+reasoning: no modal/dialog library, hand-rolled). The modal mounts
+lazily on first open (not from initial render) so its copy of the table
+doesn't sit hidden-but-present in the DOM duplicating the visible
+summary's numbers from the start — relevant because `Modal` itself
+otherwise stays permanently mounted once opened once, toggling only a
+CSS class: `visibility` (delayed only on the closing transition) drives
+both the fade/scale animation and hides it from tab order and screen
+readers while closed, with no JS timers needed for either transition
+direction.

@@ -489,7 +489,11 @@ button:disabled {
 }
 
 .inline-form .field {
-  margin-bottom: var(--space-2);
+  /* Not var(--space-4)/2 like the base .field: any bottom margin here
+     would count toward align-items: flex-end's alignment box, pushing
+     the input above the submit button's baseline instead of level with
+     it. Row spacing when wrapping comes from .inline-form's own `gap`. */
+  margin-bottom: 0;
 }
 
 input,
@@ -707,4 +711,86 @@ th {
   width: 70%;
   background: var(--text);
   border-radius: 4px 4px 0 0;
+}
+
+/* Modal */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgba(10, 10, 12, 0.55);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 180ms ease, visibility 0s linear 180ms;
+}
+
+.modal-backdrop.modal-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 180ms ease, visibility 0s linear 0s;
+}
+
+.modal-panel {
+  width: 100%;
+  max-width: 28rem;
+  max-height: min(32rem, 80vh);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
+  transform: scale(0.96);
+  transition: transform 180ms ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .modal-panel {
+    border: 1px solid var(--border);
+  }
+}
+
+.modal-backdrop.modal-open .modal-panel {
+  transform: scale(1);
+}
+
+.modal-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-4) 0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: var(--radius-full);
+  background: var(--surface-sunken);
+}
+
+.modal-close svg {
+  width: 16px;
+  height: 16px;
+}
+
+.modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: var(--space-4);
+  overflow-y: auto;
 }
