@@ -106,3 +106,42 @@ only when a feature needs it.
 for a routine are a product decision (does a routine prescribe a target,
 or just a list of exercises?) that belongs to Stage 4, not something to
 guess while only defining domain types.
+
+## D-011 — IndexedDB's own version number is the schema version
+
+There is no separate `schemaVersion` field stored anywhere; IndexedDB's
+native database version (the integer passed to `indexedDB.open`) *is* the
+schema version referenced throughout these docs. Migrations are plain
+functions keyed by the version they upgrade to, run inside
+`onupgradeneeded`; `runMigrations` walks every version between the
+connection's old version and the target version and throws if any of them
+has no defined migration, rather than silently skipping it. A second,
+parallel version number would only be able to drift from the one
+IndexedDB already tracks for free.
+
+## D-012 — One cached `IDBDatabase` connection per process
+
+`openDatabase()` opens the connection once and caches the promise;
+subsequent calls reuse it. `closeDatabase()` exists to drop that cache
+(used by tests to get a clean database between cases). This is the
+standard pattern for a browser-local database used by a single tab and
+keeps repositories from each managing their own connection lifecycle.
+
+## D-013 — Backup import restores (replaces), it does not merge
+
+`importBackup` clears every store and writes the backup's data, all in
+one multi-store IndexedDB transaction, so a failure partway through cannot
+leave some entity types cleared and others intact. Merging two data sets
+(e.g. reconciling two devices' histories) is a materially harder problem
+— id collisions, duplicate workouts — that this app does not attempt to
+solve without cloud sync in the picture; see `docs/PRODUCT.md`.
+
+## D-014 — Backup validation is structural, not a domain re-check
+
+`validateBackupFile` checks the backup's shape (required top-level fields,
+four data arrays, every entry has an `id`) and rejects a `formatVersion`
+newer than the app supports. It does not re-validate individual domain
+fields (e.g. that a `Set`'s `weight` is a sane number) — that validation
+belongs where data first enters the system (forms in Stage 3), not
+duplicated here where it could quietly drift out of sync with the real
+rules.

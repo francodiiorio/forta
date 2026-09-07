@@ -79,18 +79,20 @@ measurements. Derived numbers (volume, progress, PRs) are never persisted —
 they are computed on demand by analytics from source facts. See
 [DATA_MODEL.md](DATA_MODEL.md) for the rationale.
 
-## Stage 0 state
+## Current state (through Stage 2)
 
-As of Stage 0, `domain`, `analytics`, `persistence`, `features`,
-`components`, `hooks`, and `app/providers` are empty directory skeletons
-(see `ROADMAP.md`) — present as folders so the layering is visible, with no
-speculative code inside. `app/routes.tsx` does not exist yet either: no
-router is installed, and defining route paths ahead of any navigable
-feature would commit to a URL scheme before `product-designer` and
-`frontend-engineer` have a reason to. It is added when a stage actually
-introduces navigation (see `docs/DECISIONS.md` D-007).
+`domain` (Stage 1) and `persistence` (Stage 2) have real code; see
+`docs/DATA_MODEL.md` and `docs/FITNESS_DOMAIN.md` for what's implemented.
 
-Only the React shell (`app/App.tsx`, a static, prop-free component), the
-shared `types/` and `utils/` primitives, and the test setup exist with real
-code. No fitness entities, no IndexedDB access, and no analytics formulas
-are implemented yet.
+`analytics`, `features`, `components`, `hooks`, and `app/providers` are
+still empty directory skeletons (see `ROADMAP.md`) — present as folders so
+the layering is visible, with no speculative code inside. `app/routes.tsx`
+does not exist yet either: no router is installed, and defining route
+paths ahead of any navigable feature would commit to a URL scheme before
+`product-designer` and `frontend-engineer` have a reason to. It is added
+when a stage actually introduces navigation (see `docs/DECISIONS.md`
+D-007).
+
+The React shell (`app/App.tsx`) is still a static, prop-free component —
+no feature UI is wired up yet, and nothing in `src/app`/`src/features`
+calls into `persistence` or `domain` until Stage 3.

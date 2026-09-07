@@ -10,14 +10,14 @@ React + TypeScript + Vite + Vitest project setup, directory structure,
 subagent definitions, initial documentation. No fitness entities, no
 persistence, no analytics.
 
-## Stage 1 — Domain
+## Stage 1 — Domain (done)
 
 `Exercise`, `Muscle`, `Set`, `Workout`, `Routine`, `BodyMeasurement` as
 framework-independent TypeScript types plus the domain rules that operate
 purely on in-memory data (e.g. direct/indirect set classification). Domain
 tests.
 
-## Stage 2 — Persistence
+## Stage 2 — Persistence (done)
 
 IndexedDB schema, repositories, `schemaVersion`, migrations, import,
 export, validation. No UI beyond what's needed to exercise repositories in

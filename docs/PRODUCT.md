@@ -29,7 +29,11 @@ and optional effort metrics (RIR/RPE).
 - View progress for a specific muscle group.
 - Record body weight over time.
 - Optionally record body measurements (waist, chest, limbs, etc.).
-- Import and export all data as a portable, versioned file.
+- Import and export all data as a portable, versioned file. Importing a
+  backup **restores** it — it replaces the data currently on the device,
+  it does not merge the two. Exporting regularly is the way to move data
+  between devices or recover from a lost/reset one, since there's no
+  cloud sync.
 
 ## Explicitly out of scope for v1
 
