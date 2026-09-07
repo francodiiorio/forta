@@ -1,6 +1,7 @@
 import { ActivityHeatmap } from '../../components/ActivityHeatmap'
 import { BarChart } from '../../components/BarChart'
-import { CheckCircleIcon } from '../../components/icons'
+import { CheckCircleIcon, DumbbellIcon, LayersIcon, PlayIcon, ScaleIcon } from '../../components/icons'
+import { LineChart } from '../../components/LineChart'
 import { getISOWeekRange, getLastNWeekRanges } from '../../analytics/dateRange'
 import { getGeneralProgressOverview } from '../../analytics/progress/generalProgress'
 import { calculateDailySetCounts, calculateTotalSets } from '../../analytics/volume/activityCounts'
@@ -92,46 +93,69 @@ export function HomeSection({ exercisesApi, onGoToWorkout }: HomeSectionProps) {
         )}
 
         <button type="button" className="button-primary" onClick={onGoToWorkout}>
+          <PlayIcon className="icon-inline" />
           {todayWorkout ? 'Registrar otro entrenamiento' : 'Registrar entrenamiento'}
         </button>
       </section>
 
-      <div className="stat-grid">
-        <div className="stat-card">
-          <span className="stat-value">{workouts.length}</span>
-          <span className="stat-label">entrenamientos</span>
+      <div className="home-grid">
+        <div>
+          <div className="stat-grid">
+            <div className="stat-card">
+              <span className="stat-icon">
+                <DumbbellIcon />
+              </span>
+              <span className="stat-value">{workouts.length}</span>
+              <span className="stat-label">entrenamientos</span>
+            </div>
+            <div className="stat-card">
+              <span className="stat-icon">
+                <LayersIcon />
+              </span>
+              <span className="stat-value">{calculateTotalSets(workouts)}</span>
+              <span className="stat-label">series</span>
+            </div>
+            <div className="stat-card">
+              <span className="stat-icon">
+                <ScaleIcon />
+              </span>
+              <span className="stat-value">{formatNumber(totalVolume)}</span>
+              <span className="stat-label">kg totales</span>
+            </div>
+          </div>
+
+          <section className="card" aria-label="Actividad reciente">
+            <h3>Últimos 30 días</h3>
+            <ActivityHeatmap activeDates={activeDates} days={30} />
+          </section>
         </div>
-        <div className="stat-card">
-          <span className="stat-value">{calculateTotalSets(workouts)}</span>
-          <span className="stat-label">series</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-value">{formatNumber(totalVolume)}</span>
-          <span className="stat-label">kg totales</span>
+
+        <div>
+          <div className="card-row">
+            <section className="card" aria-label="Volumen">
+              <h4>Volumen</h4>
+              <p className="muted">{WEEKS_SHOWN} semanas</p>
+              <p className="stat-value">
+                {formatNumber(totalVolume)} <span className="stat-unit">kg</span>
+              </p>
+              <LineChart values={overview.map((point) => point.totalVolume)} filled />
+            </section>
+
+            <section className="card" aria-label="Esta semana">
+              <h4>Esta semana</h4>
+              <p className="muted">Series por día</p>
+              <BarChart data={weekDates.map((date) => ({ label: date, value: dailySets[date] ?? 0 }))} />
+              <div className="week-labels">
+                {weekDates.map((date) => (
+                  <span key={date}>{WEEKDAY_LABELS[new Date(`${date}T00:00:00Z`).getUTCDay()]}</span>
+                ))}
+              </div>
+            </section>
+          </div>
+
+          <BodyWeightCard />
         </div>
       </div>
-
-      <section className="card" aria-label="Actividad reciente">
-        <h3>Últimos 30 días</h3>
-        <ActivityHeatmap activeDates={activeDates} days={30} />
-      </section>
-
-      <section className="card" aria-label="Volumen">
-        <h3>Volumen ({WEEKS_SHOWN} semanas)</h3>
-        <BarChart data={overview.map((point) => ({ label: point.range.start, value: point.totalVolume }))} />
-      </section>
-
-      <section className="card" aria-label="Esta semana">
-        <h3>Series esta semana</h3>
-        <BarChart data={weekDates.map((date) => ({ label: date, value: dailySets[date] ?? 0 }))} />
-        <div className="week-labels">
-          {weekDates.map((date) => (
-            <span key={date}>{WEEKDAY_LABELS[new Date(`${date}T00:00:00Z`).getUTCDay()]}</span>
-          ))}
-        </div>
-      </section>
-
-      <BodyWeightCard />
     </div>
   )
 }

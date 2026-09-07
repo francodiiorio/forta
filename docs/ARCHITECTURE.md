@@ -103,6 +103,13 @@ live there. `src/components/icons.tsx` and `ActivityHeatmap.tsx` extend
 the dependency-free approach from D-032 to navigation icons and the
 30-day activity grid.
 
+A second design pass (D-039–D-041) reworked the visual language to
+match a specific reference (monochrome + one green accent, soft shadows
+over borders, pill shapes — D-039) and added a real desktop layout: the
+same nav element repositions into a left sidebar via
+`@media (min-width: 900px)` instead of a separate desktop component
+(D-040), and `HomeSection` splits into a two-column grid at that width.
+
 State-sharing across `app/App.tsx`'s tabs follows one rule: lift a hook
 only when a consumer needs to survive a tab switch (a draft, or avoiding
 a refetch flicker on data the active tab is already showing) — otherwise

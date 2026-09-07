@@ -76,6 +76,12 @@ earlier stages but were never exposed: body-weight logging
 (`persistence/backup`, Stage 2) — both now live under a new Ajustes tab.
 See `docs/ARCHITECTURE.md` and `docs/DECISIONS.md` D-035–D-038.
 
+A follow-up pass (D-039–D-041) matched the visual design to a specific
+reference (monochrome palette, soft shadows, pill shapes) and added a
+real desktop layout — a sidebar nav and a two-column Home grid above a
+900px breakpoint — since the app had only ever been designed for a
+mobile-width viewport up to that point.
+
 ## Explicitly deferred beyond this roadmap
 
 Live/active workout tracking, rest timer, notifications, backend,

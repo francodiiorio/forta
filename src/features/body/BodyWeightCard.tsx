@@ -1,3 +1,4 @@
+import { ScaleIcon } from '../../components/icons'
 import { LineChart } from '../../components/LineChart'
 import { formatNumber } from '../../utils/format'
 import { useBodyMeasurements } from './useBodyMeasurements'
@@ -9,7 +10,9 @@ export function BodyWeightCard() {
   if (loading) {
     return (
       <section className="card" aria-label="Peso corporal">
-        <h3>Peso corporal</h3>
+        <h4>
+          <ScaleIcon className="icon-inline" /> Peso corporal
+        </h4>
         <p className="muted">Cargando…</p>
       </section>
     )
@@ -18,7 +21,9 @@ export function BodyWeightCard() {
   if (measurements.length === 0) {
     return (
       <section className="card" aria-label="Peso corporal">
-        <h3>Peso corporal</h3>
+        <h4>
+          <ScaleIcon className="icon-inline" /> Peso corporal
+        </h4>
         <p className="muted">Registrá tu peso desde Ajustes para ver la tendencia acá.</p>
       </section>
     )
@@ -29,7 +34,9 @@ export function BodyWeightCard() {
 
   return (
     <section className="card" aria-label="Peso corporal">
-      <h3>Peso corporal</h3>
+      <h4>
+        <ScaleIcon className="icon-inline" /> Peso corporal
+      </h4>
       <p className="stat-value">
         {formatNumber(measurements[0].bodyWeight)} <span className="stat-unit">kg</span>
       </p>

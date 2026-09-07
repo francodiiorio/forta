@@ -444,3 +444,50 @@ not a bug to work around in production code. Polyfilled in
 `src/test/setup.ts` using `FileReader` (the one async Blob-reading API
 jsdom does implement), the same category of fix as `fake-indexeddb`
 patching jsdom's missing IndexedDB support.
+
+## D-039 — Visual language: monochrome + one accent, shadows over borders
+
+Prompted by explicit product feedback with a reference screenshot: the
+UI still didn't look "designed." Reworked `src/index.css`'s tokens to a
+monochrome primary palette (near-black in light mode / near-white in
+dark mode drives buttons, active nav state, chart lines and bars) with
+green reserved as the *only* accent, used solely for success/positive
+states (`Completado` badge, checkmarks) — not a decorative brand color.
+Cards, stat tiles, and the bottom nav use `box-shadow` for elevation in
+light mode instead of a visible border, matching the reference's soft,
+"floating" look; dark mode keeps a thin border instead, since shadows
+don't read against a near-black background. Radii increased across the
+board (`--radius-lg: 26px`, pill-shaped buttons/chips/badges/segmented
+control) for the same reason.
+
+The reference showed small "+6%" / "+3%" deltas next to its lifetime
+stat tiles. Deliberately not copied: that's a period-over-period
+workload delta shown with no frequency context — precisely what D-004
+says not to present as unqualified progress. The visual language (icon,
+big number, label, soft card) was adopted; that one element wasn't.
+
+## D-040 — Desktop layout: same nav markup, repositioned by media query
+
+Added a `@media (min-width: 900px)` breakpoint that turns the bottom nav
+into a left sidebar (same `<nav>` element and buttons — no separate
+desktop/mobile components — just `position`, `flex-direction`, and
+sizing overrides) and widens `.app-content` accordingly. `HomeSection`
+gets a `.home-grid` two-column split at that width (activity/stats on
+the left, trend cards and body weight on the right); every other page
+keeps its existing single-column card stack, which already reads fine
+wider since cards have a natural max content width. Chose one shared
+nav element over duplicate mobile/desktop nav components specifically
+to avoid two places that could drift out of sync (same reasoning as
+avoiding duplicated logic elsewhere in this codebase).
+
+## D-041 — `LineChart` gained an optional filled-area mode, used only on Home
+
+`components/LineChart.tsx` now takes a `filled` prop that adds a soft
+gradient area beneath the line and drops the per-point dots, matching
+the reference's trend-card look. Used only for Home's compact "Volumen"
+card. The Progress tab's per-exercise line chart and its general/muscle
+bar-chart-plus-table views are unchanged — those pair a chart with an
+exact-values table on purpose (D-030), where individual bars/points
+read better than a smoothed area. Two visual treatments for the same
+underlying data, chosen deliberately per how precisely each view needs
+to be read, not an inconsistency.

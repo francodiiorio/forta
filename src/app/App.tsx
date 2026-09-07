@@ -44,6 +44,9 @@ export function App() {
       </main>
 
       <nav className="bottom-nav" aria-label="Secciones">
+        <span className="sidebar-brand" aria-hidden="true">
+          Forta
+        </span>
         {TABS.map(({ key, label, Icon }) => (
           <button
             key={key}
