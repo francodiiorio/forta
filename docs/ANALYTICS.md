@@ -4,10 +4,10 @@ Analytics computes derived numbers from persisted facts (see
 [DATA_MODEL.md](DATA_MODEL.md)). It is pure TypeScript with no React and no
 direct IndexedDB access — it receives domain data and returns numbers.
 Authority: **Analytics Engineer**, constrained by definitions in
-[FITNESS_DOMAIN.md](FITNESS_DOMAIN.md). Workload, frequency, and
-performance (`src/analytics/`) are implemented as of Stage 6 — see
-"Implemented formulas" below for the exact conventions chosen. Progression
-(Stage 7) is not implemented yet.
+[FITNESS_DOMAIN.md](FITNESS_DOMAIN.md). All four categories
+(`src/analytics/`) are implemented — workload/frequency/performance
+since Stage 6, progression since Stage 7 — see "Implemented formulas"
+below for the exact conventions chosen.
 
 ## Four distinct concepts
 
@@ -58,12 +58,20 @@ workload so the user isn't shown a misleading single number.
   [FITNESS_DOMAIN.md](FITNESS_DOMAIN.md#personal-records-pr-and-estimated-1rm)).
 - Estimated 1RM, `WEIGHT_REPS` exercises only.
 
-**Progression**
-- Exercise progress: performance trend for one exercise over time.
-- Muscle progress: performance/workload trend for one muscle over time,
-  read alongside frequency, not as a bare volume delta.
-- General progress: a dashboard-level summary composed from the above,
-  never a single derived "score" invented for the purpose.
+**Progression** (implemented Stage 7 — `src/analytics/progress/`)
+- Exercise progress (`exerciseProgress.ts`): one performance point per
+  session (best completed working set that session — estimated 1RM for
+  `WEIGHT_REPS`, max reps for `BODYWEIGHT_REPS`/`REPS_ONLY`, max duration
+  for `TIME`; no point produced for `ASSISTED_BODYWEIGHT`), oldest to
+  newest. A trend to read, not a "+X%" figure.
+- Muscle progress (`muscleProgress.ts`): direct sets, indirect
+  involvement, and session count per time bucket, always shown together
+  — never workload without frequency next to it. See D-004, D-030.
+- General progress (`generalProgress.ts`): session count and total
+  volume per time bucket, side by side — not a single derived "score."
+- None of the three compare periods against each other (no "% vs. last
+  month") — they present a series and let the reader see the trend
+  themselves. `features/progress/` renders each as its own view.
 
 **Period rollups** (composed from the categories above, not a fifth
 category): daily, weekly, monthly, and custom-range stats.

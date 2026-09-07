@@ -1,17 +1,24 @@
 import { useState } from 'react'
-import type { ExercisesApi } from '../exercises/useExercises'
+import { useWorkouts } from '../../hooks/useWorkouts'
 import type { Id } from '../../types/common'
 import { isoDateTimeToDateInput } from '../../utils/date'
-import { useWorkoutHistory } from './useWorkoutHistory'
+import type { ExercisesApi } from '../exercises/useExercises'
 import { WorkoutDetail } from './WorkoutDetail'
 
 interface HistorySectionProps {
   exercisesApi: ExercisesApi
 }
 
-/** Workout history: a list of past sessions and the detail of one at a time. */
+/**
+ * Workout history: a list of past sessions and the detail of one at a
+ * time. Loads its own workouts (remounted fresh each time this tab is
+ * shown, so a workout saved elsewhere always shows up) rather than
+ * sharing a lifted copy the way `exercisesApi` is — there's no draft to
+ * preserve across tab switches here, so there's nothing lifting would
+ * buy beyond risking staleness. See docs/DECISIONS.md D-029.
+ */
 export function HistorySection({ exercisesApi }: HistorySectionProps) {
-  const { workouts, loading } = useWorkoutHistory()
+  const { workouts, loading } = useWorkouts()
   const [selectedId, setSelectedId] = useState<Id | null>(null)
 
   const exerciseById = new Map(exercisesApi.exercises.map((exercise) => [exercise.id, exercise]))

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useExercises } from '../features/exercises/useExercises'
 import { HistorySection } from '../features/history/HistorySection'
+import { ProgressSection } from '../features/progress/ProgressSection'
 import { RoutinesSection } from '../features/routines/RoutinesSection'
 import { LogWorkoutForm } from '../features/workout/LogWorkoutForm'
 import { useWorkoutForm } from '../features/workout/useWorkoutForm'
@@ -9,6 +10,7 @@ const TABS = [
   { key: 'workout', label: 'Registrar' },
   { key: 'routines', label: 'Rutinas' },
   { key: 'history', label: 'Historial' },
+  { key: 'progress', label: 'Progreso' },
 ] as const
 
 type Tab = (typeof TABS)[number]['key']
@@ -46,6 +48,8 @@ export function App() {
       )}
 
       {tab === 'history' && <HistorySection exercisesApi={exercisesApi} />}
+
+      {tab === 'progress' && <ProgressSection exercisesApi={exercisesApi} />}
     </main>
   )
 }

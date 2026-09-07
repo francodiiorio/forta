@@ -49,10 +49,12 @@ Daily, weekly, monthly stats; muscle stats; frequency; volume; PRs; est.
 1RM — per [ANALYTICS.md](ANALYTICS.md). Pure TypeScript, no UI yet (see
 D-027) — Stage 7 builds the screen that surfaces these numbers.
 
-## Stage 7 — Progress
+## Stage 7 — Progress (done)
 
 Progress dashboard: general, per-exercise, per-muscle, using the
-progression metrics defined in ANALYTICS.md (not raw workload deltas).
+progression metrics defined in ANALYTICS.md (not raw workload deltas —
+see D-030). Added as a fourth tab; workouts are loaded per-feature, not
+lifted to App like the exercise catalog (D-029).
 
 ## Stage 8 — Polish
 

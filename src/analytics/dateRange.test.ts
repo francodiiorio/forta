@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import type { Workout } from '../domain/workout/workout'
-import { filterWorkoutsByRange, getDayRange, getISOWeekRange, getMonthRange, isDateInRange } from './dateRange'
+import {
+  filterWorkoutsByRange,
+  getDayRange,
+  getISOWeekRange,
+  getLastNWeekRanges,
+  getMonthRange,
+  isDateInRange,
+} from './dateRange'
 
 describe('isDateInRange', () => {
   it('includes both boundaries', () => {
@@ -47,6 +54,22 @@ describe('getMonthRange', () => {
 
   it('handles a 31-day month', () => {
     expect(getMonthRange('2026-01-05')).toEqual({ start: '2026-01-01', end: '2026-01-31' })
+  })
+})
+
+describe('getLastNWeekRanges', () => {
+  it('returns consecutive, non-overlapping weeks, oldest first', () => {
+    const ranges = getLastNWeekRanges('2026-03-11', 3)
+
+    expect(ranges).toEqual([
+      { start: '2026-02-23', end: '2026-03-01' },
+      { start: '2026-03-02', end: '2026-03-08' },
+      { start: '2026-03-09', end: '2026-03-15' },
+    ])
+  })
+
+  it('returns exactly one range for count 1', () => {
+    expect(getLastNWeekRanges('2026-03-11', 1)).toEqual([{ start: '2026-03-09', end: '2026-03-15' }])
   })
 })
 

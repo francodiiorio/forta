@@ -46,7 +46,7 @@ but is required for anything touching domain, analytics, persistence,
 migrations, import/export, or a core flow (see
 `.claude/agents/orchestrator.md`).
 
-## Coverage so far (through Stage 6)
+## Coverage so far (through Stage 7)
 
 Domain (Stage 1): tracking-type field rules, set-type classification,
 and the direct/indirect muscle involvement rule against the Bench Press
@@ -96,9 +96,19 @@ by a day depending on the runtime's UTC offset — found while relying on
 date-substring comparisons for period stats. `utils/date.ts` had no
 dedicated test before this; it does now (D-028).
 
-Not yet covered because the feature doesn't exist yet: progress
-(Stage 7) and body measurements must not proceed without tests per the
-rules stated above.
+Progress (Stage 7): unit tests per progression function (best-per-session
+performance picking, `ASSISTED_BODYWEIGHT` producing no series, workload+
+frequency reported together per range) plus an App-level integration
+test that logs a real workout and checks it shows up correctly in all
+three progress views (general table, exercise series, muscle table) —
+not just that the analytics functions return the right numbers in
+isolation, but that the dashboard actually wires them up. Manually
+verified in a real browser, including the estimated-1RM arithmetic.
+
+Not yet covered because the feature doesn't exist yet: body measurement
+logging (the domain entity exists since Stage 1, but no UI was scheduled
+for it — see `docs/PRODUCT.md`) must not proceed without tests per the
+rules stated above, whenever it's built.
 
 ## Commands
 

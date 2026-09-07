@@ -303,3 +303,37 @@ testing so far because the runtime timezone used has a negative UTC
 offset, where the bug doesn't trigger — a reminder that "worked when I
 tried it" doesn't cover timezones the tester isn't in. `utils/date.ts`
 had no dedicated test before this either; added one.
+
+## D-029 — `useWorkouts` is not lifted to `App`, unlike `useExercises`
+
+Both `HistorySection` and `ProgressSection` (Stage 7) need the full
+workout list, so the loading hook (`src/hooks/useWorkouts.ts`) is shared
+code — but each feature calls it independently rather than App calling
+it once and passing it down, unlike `exercisesApi` (D-018). Reasoning:
+`exercisesApi` and the workout draft (`useWorkoutForm`) are lifted
+because they need to survive a tab switch (a draft in progress, or
+avoiding a refetch flicker for data shown on the currently-active tab).
+Workout history has no draft to preserve, and each of these two tabs is
+unmounted whenever it isn't the active one — so calling the hook
+per-feature means it refetches fresh on every mount, i.e. every time the
+user opens that tab. Lifting it would have introduced a real staleness
+bug instead: a workout saved while on another tab would never appear
+until a full page reload, since nothing would trigger the lifted
+instance to reload. Don't lift shared data by default — lift it only
+when there's a concrete reason two simultaneously-relevant consumers
+need one live copy.
+
+## D-030 — Progress dashboard: three separate trend views, never one score
+
+`ProgressSection` shows general (session count + volume per week),
+per-exercise (a performance series), and per-muscle (direct/indirect
+sets + sessions per week) as three independent views — there is no
+combined "progress score," percentage, or verdict anywhere. Exercise
+progress uses performance (best 1RM/reps/duration per session) rather
+than volume, specifically because performance isn't confounded by
+frequency the way volume is (D-004) — a heavier single is a heavier
+single regardless of how many sessions happened, so it's actually safe
+to read as a trend on its own. General and muscle progress *are*
+workload-based, which is exactly why they always render session count
+next to volume/sets rather than either number alone — the reader needs
+both to tell "trained harder" apart from "trained more often."

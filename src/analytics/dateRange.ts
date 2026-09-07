@@ -56,3 +56,24 @@ export function getMonthRange(date: string): DateRange {
 export function filterWorkoutsByRange(workouts: Workout[], range: DateRange): Workout[] {
   return workouts.filter((workout) => isDateInRange(workout.startedAt.slice(0, 10), range))
 }
+
+/**
+ * The last `count` ISO weeks, oldest first, ending with the week
+ * containing `date`. For bucketing a trend series — see
+ * `analytics/progress/`.
+ */
+export function getLastNWeekRanges(date: string, count: number): DateRange[] {
+  const ranges: DateRange[] = []
+  let cursor = date
+
+  for (let i = 0; i < count; i++) {
+    const range = getISOWeekRange(cursor)
+    ranges.unshift(range)
+
+    const dayBeforeWeek = parseDateString(range.start)
+    dayBeforeWeek.setUTCDate(dayBeforeWeek.getUTCDate() - 1)
+    cursor = toDateString(dayBeforeWeek)
+  }
+
+  return ranges
+}
