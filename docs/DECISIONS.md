@@ -662,3 +662,27 @@ the nav (D-040) and Home's grid, not a second desktop variant.
 `calc(var(--space-6) + env(safe-area-inset-bottom, 0px))` — more
 breathing room generally, plus (now that the mobile panel is a real
 edge-anchored sheet) clearance for the iOS home-indicator safe area.
+
+## D-048 — Stronger glass, and a bottom fade instead of relying on padding alone
+
+Two more rounds of product feedback with screenshots on D-047's modal:
+the glass effect was too subtle to read as "glass," and content still
+looked stuck to the bottom edge despite the D-047 padding fix.
+
+Glass: `--glass-bg` dropped from ~72% opaque to ~50–55%, `backdrop-filter`
+blur went 24px → 36px with saturate 180% → 220%, and an `inset 0 1px 0
+var(--glass-highlight)` box-shadow layer was added — a thin light line
+along the top edge, the detail that reads as "a pane of glass catching
+light" rather than just "a translucent panel."
+
+Bottom padding, reconsidered: measuring the D-047 fix in the browser
+showed the real gap (~40px) was already there — the *perception* of
+content being stuck was about the scrollbar's hard cutoff mid-item
+while scrolling, which no amount of padding fixes, since padding only
+helps once you're at the true end. Added `.modal-body-fade`: an
+absolutely-positioned gradient (`transparent` → `var(--glass-bg)`) over
+the bottom 40px of the scroll area, always present regardless of scroll
+position. Mid-scroll, it softens whatever real content is currently
+cut off into the glass instead of a hard edge; at the true end, it just
+enhances the existing padding. One rule handles both cases — no scroll-
+position tracking needed to decide when to show it.

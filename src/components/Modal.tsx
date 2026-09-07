@@ -18,9 +18,13 @@ interface ModalProps {
  * A bottom sheet on mobile (same nav-repositioning pattern as D-040: one
  * markup, media query moves it), a centered dialog on desktop — both with
  * a frosted-glass panel (`backdrop-filter`) over a blurred backdrop
- * (D-047). `.modal-handle` is a static drag-affordance visual, not an
- * actual swipe gesture — hidden on desktop where the sheet isn't anchored
- * to an edge.
+ * (D-047, D-048). `.modal-handle` is a static drag-affordance visual, not
+ * an actual swipe gesture — hidden on desktop where the sheet isn't
+ * anchored to an edge. `.modal-body-fade` softens the scroll area's
+ * bottom edge into the glass rather than clipping content hard against
+ * it (D-048) — present regardless of scroll position, since it looks
+ * right whether it's fading real content mid-scroll or just the padding
+ * once actually at the end.
  */
 export function Modal({ open, title, onClose, children }: ModalProps) {
   useEffect(() => {
@@ -51,6 +55,7 @@ export function Modal({ open, title, onClose, children }: ModalProps) {
           </button>
         </div>
         <div className="modal-body">{children}</div>
+        <div className="modal-body-fade" aria-hidden="true" />
       </div>
     </div>
   )
