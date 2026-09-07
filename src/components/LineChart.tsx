@@ -2,19 +2,18 @@ import { useId } from 'react'
 
 interface LineChartProps {
   values: number[]
-  /** Adds a soft gradient fill beneath the line (used for trend cards) and hides the per-point dots. */
-  filled?: boolean
 }
 
 const VIEW_WIDTH = 300
 const VIEW_HEIGHT = 100
 
 /**
- * Minimal inline SVG line chart for a single trend series — see
+ * Minimal inline SVG line chart for a single trend series — a soft
+ * gradient fill beneath the line, no per-point dots (D-043). See
  * BarChart for why this isn't a charting library and isn't the
  * accessible source of the data.
  */
-export function LineChart({ values, filled = false }: LineChartProps) {
+export function LineChart({ values }: LineChartProps) {
   const gradientId = useId()
 
   if (values.length === 0) return null
@@ -35,18 +34,14 @@ export function LineChart({ values, filled = false }: LineChartProps) {
 
   return (
     <svg className="chart" viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`} preserveAspectRatio="none" aria-hidden="true">
-      {filled && (
-        <defs>
-          <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" className="chart-area-stop-start" />
-            <stop offset="100%" className="chart-area-stop-end" />
-          </linearGradient>
-        </defs>
-      )}
-      {filled && <polygon points={areaPath} fill={`url(#${gradientId})`} stroke="none" />}
+      <defs>
+        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" className="chart-area-stop-start" />
+          <stop offset="100%" className="chart-area-stop-end" />
+        </linearGradient>
+      </defs>
+      <polygon points={areaPath} fill={`url(#${gradientId})`} stroke="none" />
       <polyline className="chart-line" points={linePath} />
-      {!filled &&
-        points.map(([x, y], index) => <circle key={index} className="chart-point" cx={x} cy={y} r={3} />)}
     </svg>
   )
 }

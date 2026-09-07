@@ -682,11 +682,8 @@ th {
   stop-opacity: 0;
 }
 
-.chart-point {
-  fill: var(--text);
-}
-
-.chart-axis-label {
+.chart-bar-value {
   fill: var(--text-muted);
-  font-size: 0.65rem;
+  font-size: 7px;
+  font-weight: 600;
 }

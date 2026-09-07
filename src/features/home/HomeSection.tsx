@@ -138,7 +138,7 @@ export function HomeSection({ exercisesApi, onGoToWorkout }: HomeSectionProps) {
               <p className="stat-value">
                 {formatNumber(totalVolume)} <span className="stat-unit">kg</span>
               </p>
-              <LineChart values={overview.map((point) => point.totalVolume)} filled />
+              <LineChart values={overview.map((point) => point.totalVolume)} />
             </section>
 
             <section className="card" aria-label="Esta semana">

@@ -527,3 +527,28 @@ taken before this change don't have it — an additive, backward-
 compatible change to the same `BACKUP_FORMAT_VERSION` (no bump needed;
 consistent with D-002's independence between schema and backup
 versioning).
+
+## D-043 — All `LineChart`s use the filled-gradient style; `BarChart` gained value labels
+
+Supersedes the part of D-041 that kept the Progress tab's per-exercise
+line chart in the plain dots-and-line style: explicit product feedback
+with a reference image asked for the filled-gradient look (used until
+now only on Home's Volumen card) everywhere a line chart appears.
+`LineChart`'s `filled` prop is gone — there's only one rendering mode
+now, since no caller wants the other one anymore. The exact-values list
+`ExerciseProgressView` renders next to its chart (the reason D-041 gave
+for keeping dots there) still does the same job; dropping the dots
+doesn't remove a reader's ability to see precise numbers, since that
+list was always the accessible source of them, not the (`aria-hidden`)
+chart.
+
+Also addressed: `GeneralProgressView`'s bar charts (sessions/volume per
+week) had no visible numbers at all — reading them meant looking away
+to the table underneath. `BarChart` now draws each bar's value above
+it (small muted text, `k`-abbreviated above 1000 to stay legible over a
+narrow bar), with headroom reserved in the viewBox so the tallest bar's
+label doesn't clip. Still `aria-hidden`, per the component's existing
+contract: the paired table/list stays the real accessible source, this
+is a visual aid layered on top of it, not a replacement. This also
+improves `MuscleProgressView`'s and Home's "Esta semana" bar charts for
+free, since they share the same component.
