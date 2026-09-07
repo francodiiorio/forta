@@ -633,3 +633,32 @@ one is *not* lazily mounted on first open: the list rows only ever show
 a date/exercise summary, never the per-set detail `WorkoutDetail`
 renders, so there's no risk of the same numbers appearing twice in the
 DOM the way body-weight's summary and table could.
+
+## D-047 — `Modal` restyled as a frosted-glass bottom sheet (mobile) / centered dialog (desktop)
+
+Product feedback with a reference image: wanted the "vidriada y
+blureada" (glassy, blurred) look of an iOS-style bottom sheet, plus more
+bottom padding — the modal body's last item sat flush against the
+rounded corner.
+
+New `--glass-bg`/`--glass-border`/`--glass-backdrop` tokens (light and
+dark variants, same place as every other design token — D-031). The
+backdrop gets `backdrop-filter: blur(8px)` over a translucent tint, so
+the page behind visibly blurs rather than just dimming; `.modal-panel`
+itself is a translucent `--glass-bg` with a stronger
+`backdrop-filter: blur(24px) saturate(180%)` — the actual "frosted
+glass" pane — plus a faint `--glass-border` for edge definition, since
+a translucent panel has no natural edge against a translucent backdrop.
+
+Layout follows the reference literally on mobile (anchored to the
+bottom, full width, rounded top corners only, a static drag-handle bar)
+and adapts it for desktop as asked — same component repositioned by a
+`@media (min-width: 900px)` query into the centered dialog it already
+was, hiding the handle there since the sheet isn't anchored to an edge
+to drag from. Same one-markup-repositioned-by-breakpoint approach as
+the nav (D-040) and Home's grid, not a second desktop variant.
+
+`.modal-body`'s bottom padding went from `var(--space-4)` to
+`calc(var(--space-6) + env(safe-area-inset-bottom, 0px))` — more
+breathing room generally, plus (now that the mobile panel is a real
+edge-anchored sheet) clearance for the iOS home-indicator safe area.

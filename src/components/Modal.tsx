@@ -14,6 +14,13 @@ interface ModalProps {
  * rendering — `visibility` (with a transition delay only on close) drives
  * both the fade/scale transition and hides it from focus, tabbing, and
  * screen readers while closed, with no JS timers needed for either.
+ *
+ * A bottom sheet on mobile (same nav-repositioning pattern as D-040: one
+ * markup, media query moves it), a centered dialog on desktop — both with
+ * a frosted-glass panel (`backdrop-filter`) over a blurred backdrop
+ * (D-047). `.modal-handle` is a static drag-affordance visual, not an
+ * actual swipe gesture — hidden on desktop where the sheet isn't anchored
+ * to an edge.
  */
 export function Modal({ open, title, onClose, children }: ModalProps) {
   useEffect(() => {
@@ -36,6 +43,7 @@ export function Modal({ open, title, onClose, children }: ModalProps) {
         aria-label={title}
         onClick={(event) => event.stopPropagation()}
       >
+        <div className="modal-handle" aria-hidden="true" />
         <div className="modal-header">
           <h2>{title}</h2>
           <button type="button" className="modal-close" onClick={onClose} aria-label="Cerrar">

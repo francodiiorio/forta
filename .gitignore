@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Local CLI assistant runtime state (session locks, not project config)
+.claude/scheduled_tasks.lock
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -17,6 +17,9 @@
   --focus-ring: #0b0b0d;
   --shadow-card: 0 1px 2px rgba(20, 20, 25, 0.04), 0 10px 24px -8px rgba(20, 20, 25, 0.1);
   --shadow-float: 0 8px 30px -6px rgba(20, 20, 25, 0.18);
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-backdrop: rgba(244, 244, 246, 0.55);
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -52,6 +55,9 @@
     --focus-ring: #ffffff;
     --shadow-card: none;
     --shadow-float: 0 8px 30px -6px rgba(0, 0, 0, 0.6);
+    --glass-bg: rgba(28, 28, 31, 0.72);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-backdrop: rgba(0, 0, 0, 0.45);
   }
 }
 
@@ -713,50 +719,58 @@ th {
   border-radius: 4px 4px 0 0;
 }
 
-/* Modal */
+/* Modal — bottom sheet on mobile, centered dialog on desktop (D-047, same repositioning approach as the nav — D-040) */
 
 .modal-backdrop {
   position: fixed;
   inset: 0;
   z-index: 50;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-  padding: var(--space-4);
-  background: rgba(10, 10, 12, 0.55);
+  background: var(--glass-backdrop);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 180ms ease, visibility 0s linear 180ms;
+  transition: opacity 200ms ease, visibility 0s linear 200ms;
 }
 
 .modal-backdrop.modal-open {
   opacity: 1;
   visibility: visible;
-  transition: opacity 180ms ease, visibility 0s linear 0s;
+  transition: opacity 200ms ease, visibility 0s linear 0s;
 }
 
 .modal-panel {
   width: 100%;
-  max-width: 28rem;
-  max-height: min(32rem, 80vh);
+  max-width: none;
+  max-height: min(85vh, 40rem);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: var(--surface);
-  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-bottom: none;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   box-shadow: var(--shadow-float);
-  transform: scale(0.96);
-  transition: transform 180ms ease;
-}
-
-@media (prefers-color-scheme: dark) {
-  .modal-panel {
-    border: 1px solid var(--border);
-  }
+  transform: translateY(24px);
+  transition: transform 220ms ease;
 }
 
 .modal-backdrop.modal-open .modal-panel {
-  transform: scale(1);
+  transform: translateY(0);
+}
+
+.modal-handle {
+  flex-shrink: 0;
+  width: 36px;
+  height: 4px;
+  margin: var(--space-3) auto 0;
+  border-radius: var(--radius-full);
+  background: var(--border);
 }
 
 .modal-header {
@@ -764,7 +778,7 @@ th {
   flex-shrink: 0;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-4) var(--space-4) 0;
+  padding: var(--space-3) var(--space-4) 0;
 }
 
 .modal-header h2 {
@@ -791,8 +805,31 @@ th {
 .modal-body {
   flex: 1 1 auto;
   min-height: 0;
-  padding: var(--space-4);
+  padding: var(--space-4) var(--space-4) calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
   overflow-y: auto;
+}
+
+@media (min-width: 900px) {
+  .modal-backdrop {
+    align-items: center;
+    padding: var(--space-4);
+  }
+
+  .modal-panel {
+    max-width: 28rem;
+    max-height: min(32rem, 80vh);
+    border-radius: var(--radius-lg);
+    border-bottom: 1px solid var(--glass-border);
+    transform: translateY(8px) scale(0.97);
+  }
+
+  .modal-backdrop.modal-open .modal-panel {
+    transform: translateY(0) scale(1);
+  }
+
+  .modal-handle {
+    display: none;
+  }
 }
 
 /* History list — one clickable row per workout, opens WorkoutDetail in a Modal (D-045) */
