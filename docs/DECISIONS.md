@@ -552,3 +552,25 @@ contract: the paired table/list stays the real accessible source, this
 is a visual aid layered on top of it, not a replacement. This also
 improves `MuscleProgressView`'s and Home's "Esta semana" bar charts for
 free, since they share the same component.
+
+## D-044 — `BarChart` rebuilt as CSS flexbox columns, not an SVG viewBox
+
+D-043's value labels looked visibly warped ("se ve muy mal" — product
+feedback with a screenshot) on `GeneralProgressView`'s full-width
+desktop cards: the SVG used `viewBox="0 0 300 100"` with
+`preserveAspectRatio="none"` to fill the card, which stretches
+*everything* inside non-uniformly whenever the rendered aspect ratio
+isn't 3:1 — bars included, but it's the text glyphs where uneven
+horizontal stretch actually reads as broken. A narrow card (close to
+3:1) hid this; a full-width desktop card (much wider than tall) didn't.
+
+Rather than special-case the label to counter-scale inside the SVG,
+replaced the whole component with plain flexbox columns — each bar a
+`div` with `height` as a percentage of a fixed-height container, the
+label a normal sibling `<span>` above it. Regular HTML text under
+normal CSS layout can't suffer this distortion at any width, and it
+gets rounded top corners on the bars for free (matching the rest of the
+app's soft, rounded visual language — D-039 — better than a hard SVG
+rect did). `LineChart` keeps its SVG viewBox: a single stretched
+polyline reads as "a line," not as broken the way stretched text does,
+so it wasn't showing the same problem.
